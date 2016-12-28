@@ -2,7 +2,9 @@
 
 """
 import ast
-from code import CodeGenerator
+from code.generator import CodeGenerator
+from code.analyzer import CodeAnalyzer
+
 
 def str_node(node):
     if isinstance(node, ast.AST):
