@@ -4,6 +4,13 @@ from errors import CompileError, SyntaxNotSupport
 
 CONTEXT_STATUS_GLOBAL = 1
 CONTEXT_STATUS_FUNCTION = 2
+def str_node(node):
+    if isinstance(node, ast.AST):
+        fields = [(name, str_node(val)) for name, val in ast.iter_fields(node) if name not in ('left', 'right')]
+        rv = '%s(%s' % (node.__class__.__name__, ', '.join('%s=%s' % field for field in fields))
+        return rv + ')'
+    else:
+        return repr(node)
 
 
 class CodeGenerator():
@@ -16,7 +23,7 @@ class CodeGenerator():
 
     @property
     def is_global(self):
-        return self.context_status == CONTEXT_STATUS_GLOBAL        
+        return self.context_status == CONTEXT_STATUS_GLOBAL
 
     def generate_assign(self, node):
         target_code = ''
@@ -54,7 +61,10 @@ class CodeGenerator():
         return self._generate(node.value)
 
     def generate_call(self, node):
-        if not node.kwargs is None:
+        if hasattr(node, 'kwargs'):
+            if not node.kwargs is None:
+                raise SyntaxNotSupport('Keyword arguments is not support yet')
+        elif not len(node.keywords) == 0:
             raise SyntaxNotSupport('Keyword arguments is not support yet')
         funciton_name = node.func.id
         arguments_code = ' '.join([self._generate(x) for x in node.args])
@@ -67,7 +77,6 @@ class CodeGenerator():
             raise SyntaxNotSupport(node.op.__class__.__name__ + " operation is not support yet.")
 
     def _generate(self, node):
-        # print('  ' + str_node(node))
         if isinstance(node, ast.Assign):
             return self.generate_assign(node)
         elif isinstance(node, ast.Name):
