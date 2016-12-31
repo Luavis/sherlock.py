@@ -13,10 +13,12 @@ def str_node(node):
         return repr(node)
 
 
-class CodeGenerator():
+class CodeGenerator(object):
 
     def __init__(self, code=None, node=None, context_status=CONTEXT_STATUS_GLOBAL):
         self.context_status = context_status
+        self.global_generator = None
+        self.sub_generator = []
         self.code = code
         self.node = node
         self.variable_list = []

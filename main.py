@@ -2,7 +2,6 @@
 
 """
 import ast
-from code.generator import CodeGenerator
 from code.analyzer import CodeAnalyzer
 
 
@@ -17,11 +16,16 @@ def str_node(node):
 
 def main():
     code = """
-a = 2 + 3
+def echo(msg):
+    return 1
+a = 2 + "Hello"
 echo(a)
 """
-    generator = CodeGenerator(code)
-    print(generator.generate())
+    analyzer = CodeAnalyzer(code)
+    generator = analyzer.analysis()
+
+    # code = generator.generator()
+    # print(code)
 
 
 if __name__ == '__main__':
