@@ -4,6 +4,7 @@ from errors import CompileError, SyntaxNotSupport
 
 CONTEXT_STATUS_GLOBAL = 1
 CONTEXT_STATUS_FUNCTION = 2
+
 def str_node(node):
     if isinstance(node, ast.AST):
         fields = [(name, str_node(val)) for name, val in ast.iter_fields(node) if name not in ('left', 'right')]
@@ -15,13 +16,13 @@ def str_node(node):
 
 class CodeGenerator(object):
 
-    def __init__(self, code=None, node=None, context_status=CONTEXT_STATUS_GLOBAL):
+    def __init__(self, code=None, node=None, context_status=CONTEXT_STATUS_GLOBAL, sub_generator=[], variable_list=[]):
         self.context_status = context_status
         self.global_generator = None
         self.sub_generator = []
         self.code = code
         self.node = node
-        self.variable_list = []
+        self.variable_list = variable_list
 
     @property
     def is_global(self):

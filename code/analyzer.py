@@ -42,24 +42,34 @@ Type.STRING = Type(Type._STRING)
 
 
 class CodeAnalyzer(object):
-    def __init__(self, code, node=None):
+    def __init__(self, code, module_node=None):
         self.code = code
-        self.node = node
-        if node is None:
-            self.node = ast.parse(self.code)
+        self.module_node = module_node
+        if module_node is None:
+            self.module_node = ast.parse(self.code)
 
-        if not isinstance(self.node, ast.Module):
+        if not isinstance(self.module_node, ast.Module):
             raise CompileError()
 
     def analysis(self):
-        for node in self.node.body:
+        for node in self.module_node.body:
             if isinstance(node, ast.Assign):
-                print(self.type_checker(node.value))
+                self.get_type(node.value)
 
-    def type_checker(self, node):
+    def analysis_function(self, function_node, arg_types=[]):
+        for node in function_node.body:
+            if isinstance(node, ast.Assign):
+                self.get_type(node.value)
+
+    def get_function_return_type(self, function_name, arg_types=[]):
+        for node in self.module_node.body:
+            if isinstance(node, ast.FunctionDef) and node.name == function_name:
+                self.analysis_function(node, arg_types)
+
+    def get_type(self, node):
         if isinstance(node, ast.BinOp):
-            left_type = self.type_checker(node.left)
-            right_type = self.type_checker(node.right)
+            left_type = self.get_type(node.left)
+            right_type = self.get_type(node.right)
 
             if isinstance(node.op, ast.Add):
                 if left_type.is_number and right_type.is_number:
@@ -75,7 +85,12 @@ class CodeAnalyzer(object):
                 return Type.NUMBER
             else:
                 raise SyntaxNotSupport("Not support unary operator except number.")
+
         elif isinstance(node, ast.Num):
             return Type.NUMBER
+
         elif isinstance(node, ast.Str):
             return Type.STRING
+        elif isinstance(node, ast.Call):
+            arg_types = [self.get_type(arg) for arg in node.args]
+            return self.get_function_return_type(node.func.id, arg_types)
