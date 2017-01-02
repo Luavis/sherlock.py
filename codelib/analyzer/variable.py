@@ -50,7 +50,7 @@ class Variables(object):
     def __init__(self):
         self.list = {}
 
-    def __getattr__(self, name):
+    def __getitem__(self, name):
         return self.list.get(name)
 
     def append(self, variable):

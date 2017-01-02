@@ -1,3 +1,6 @@
+from functools import reduce
+
+
 class Function(object):
     def __init__(self, name, arg_types, return_type, code_generator):
         self.name = name
@@ -5,8 +8,8 @@ class Function(object):
         self.arg_types = arg_types
         self.code_generator = code_generator
 
-    def is_arg_types_match(arg_types):
-        return reduce(lambda x, y: x & y, [x == arg_types[i] for x, i in enumerate(self.arg_types)])
+    def is_arg_types_match(self, arg_types):
+        return reduce(lambda x, y: x & y, [x == arg_types[i] for i, x in enumerate(self.arg_types)])
 
     def __repr__(self):
         return 'Func(name=%s, arg_types=%s, return_type=%s)' % (self.name, repr(self.arg_types), repr(self.return_type))

@@ -1,32 +1,27 @@
 import ast
-from errors import CompileError, SyntaxNotSupportError, TypeMismatchError
+from errors import CompileError, SyntaxNotSupportError, ParamTypeMismatchError
 from codelib.generator import CodeGenerator
 from codelib.analyzer.variable import Type, Variable, Variables
 from codelib.analyzer.function import Function, Functions
 
-
-def str_node(node):
-    if isinstance(node, ast.AST):
-        fields = [(name, str_node(val)) for name, val in ast.iter_fields(node) if name not in ('left', 'right')]
-        rv = '%s(%s' % (node.__class__.__name__, ', '.join('%s=%s' % field for field in fields))
-        return rv + ')'
-    else:
-        return repr(node)
 
 class CodeAnalyzer(object):
     def __init__(self, code):
         self.code = code
         self.module_node = ast.parse(self.code)
         self.functions = Functions()
+        self.variables = Variables()
         if not isinstance(self.module_node, ast.Module):
             raise CompileError()
 
     def analysis(self):
-        variables = Variables()
         for node in self.module_node.body:
             if isinstance(node, ast.Assign):
-                self.analysis_assign_node(variables, node)
-        generator = CodeGenerator(self.code, functions= self.functions,variables=variables)
+                self.analysis_assign_node(self.variables, node)
+            elif isinstance(node, ast.Expr):
+                if isinstance(node.value, ast.Call):
+                    self.get_type(node.value)
+        generator = CodeGenerator(self.code, functions=self.functions, variables=self.variables)
         return generator
 
     def analysis_function(self, function_node, arg_types=[]):
@@ -55,7 +50,7 @@ class CodeAnalyzer(object):
             if function.is_arg_types_match(arg_types):
                 return function.return_type
             else:
-                raise TypeMismatchError("Function '%s' parameter type is not match", function_name)
+                raise ParamTypeMismatchError("Function '%s' parameter type is not match", function_name)
         else:
             for node in self.module_node.body:
                 if isinstance(node, ast.FunctionDef) and node.name == function_name:
@@ -92,3 +87,6 @@ class CodeAnalyzer(object):
         elif isinstance(node, ast.Call):
             arg_types = [self.get_type(arg) for arg in node.args]
             return self.get_function_return_type(node.func.id, arg_types)
+        elif isinstance(node, ast.Name):
+            return self.variables[node.id].var_type
+

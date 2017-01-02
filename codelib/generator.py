@@ -1,7 +1,7 @@
 import ast
 import types
 from errors import CompileError, SyntaxNotSupportError
-from codelib.analyzer.variable import Variables
+from codelib.analyzer.variable import Variables, Type
 from codelib.analyzer.function import Functions
 
 
@@ -24,6 +24,7 @@ class CodeGenerator(object):
         self.code = code
         self.node = node
         self.variables = variables
+        self.return_data_code = []
 
     @property
     def is_global(self):
@@ -55,7 +56,8 @@ class CodeGenerator(object):
         elif isinstance(self.node, ast.FunctionDef):
             if not len(self.node.decorator_list) == 0:
                 raise SyntaxNotSupportError('Function decoration is not support yet.')
-            arguments_code = '\n'.join([self._generate(x) + '=$' + str(i + 1) for i, x in enumerate(self.node.args.args)])
+
+            arguments_code = '\n'.join(['local %s=$%i' % (self._generate(x), i + 1) for i, x in enumerate(self.node.args.args)])
             body_code = '\n'.join([self._generate(x) for x in self.node.body])
             return 'function %s() {\n%s\n%s\n}' % (self.node.name, arguments_code, body_code)
         else:
@@ -76,9 +78,12 @@ class CodeGenerator(object):
 
     def generate_binop(self, node):
         if isinstance(node.op, ast.Add):
-            return self._generate(node.left) + '+' + self._generate(node.right)
+            if self.get_type(node.left).is_number and self.get_type(node.right).is_number:
+                return self._generate(node.left) + '+' + self._generate(node.right)
+            else:
+                return self._generate(node.left) + self._generate(node.right)
         else:
-            raise SyntaxNotSupportError(node.op.__class__.__name__ + " operation is not support yet.")
+            raise SyntaxNotSupportError("%s operation is not support yet." % node.op.__class__.__name__)
 
     def _generate(self, node):
         if isinstance(node, ast.Assign):
@@ -98,5 +103,20 @@ class CodeGenerator(object):
         elif isinstance(node, ast.FunctionDef):
             generator = CodeGenerator(node=node, context_status=CONTEXT_STATUS_FUNCTION)
             return generator.generate()
-        else:
+        elif isinstance(node, ast.arg):
+            return node.arg
+        elif isinstance(node, ast.Return):
             return ''
+        else:
+            raise SyntaxNotSupportError("%s is not support yet." % node.__class__.__name__)
+
+    def get_type(self, node):
+        if isinstance(node, ast.Num):
+            return Type.NUMBER
+        elif isinstance(node, ast.Str):
+            return Type.STRING
+        elif isinstance(node, ast.Name):
+
+            return self.variables[node.id].var_type
+        else:
+            return Type.VOID

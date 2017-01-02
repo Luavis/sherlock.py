@@ -8,5 +8,5 @@ class CompileError(Exception):
 class SyntaxNotSupportError(Exception):
     pass
 
-class TypeMismatchError(Exception):
+class ParamTypeMismatchError(Exception):
     pass
