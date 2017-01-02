@@ -1,4 +1,4 @@
-from code.analyzer import CodeAnalyzer
+from codelib.analyzer import CodeAnalyzer
 
 
 def test_simple_anlyzer():

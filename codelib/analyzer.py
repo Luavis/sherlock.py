@@ -1,7 +1,6 @@
 import ast
 from errors import CompileError, SyntaxNotSupport
-from code.generator import CodeGenerator
-
+from codelib.generator import CodeGenerator
 
 
 def str_node(node):

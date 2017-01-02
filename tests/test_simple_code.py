@@ -1,4 +1,4 @@
-from code.generator import CodeGenerator
+from codelib.generator import CodeGenerator
 
 
 def test_assignment_operator():

@@ -4,7 +4,7 @@
 """
 import argparse
 from os import path
-from code.analyzer import CodeAnalyzer
+from codelib.analyzer import CodeAnalyzer
 
 
 parser = argparse.ArgumentParser(description='Python to bash trans-compiler.')
