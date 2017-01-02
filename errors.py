@@ -5,5 +5,8 @@
 class CompileError(Exception):
     pass
 
-class SyntaxNotSupport(Exception):
+class SyntaxNotSupportError(Exception):
+    pass
+
+class TypeMismatchError(Exception):
     pass

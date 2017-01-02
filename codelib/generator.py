@@ -1,28 +1,29 @@
 import ast
 import types
-from errors import CompileError, SyntaxNotSupport
+from errors import CompileError, SyntaxNotSupportError
+from codelib.analyzer.variable import Variables
+from codelib.analyzer.function import Functions
+
 
 CONTEXT_STATUS_GLOBAL = 1
 CONTEXT_STATUS_FUNCTION = 2
 
-def str_node(node):
-    if isinstance(node, ast.AST):
-        fields = [(name, str_node(val)) for name, val in ast.iter_fields(node) if name not in ('left', 'right')]
-        rv = '%s(%s' % (node.__class__.__name__, ', '.join('%s=%s' % field for field in fields))
-        return rv + ')'
-    else:
-        return repr(node)
-
-
 class CodeGenerator(object):
 
-    def __init__(self, code=None, node=None, context_status=CONTEXT_STATUS_GLOBAL, sub_generator=[], variable_list=[]):
+    def __init__(
+        self,
+        code=None,
+        node=None,
+        context_status=CONTEXT_STATUS_GLOBAL,
+        functions=Functions(),
+        variables=Variables()
+    ):
         self.context_status = context_status
         self.global_generator = None
-        self.sub_generator = []
+        self.functions = functions
         self.code = code
         self.node = node
-        self.variable_list = variable_list
+        self.variables = variables
 
     @property
     def is_global(self):
@@ -53,7 +54,7 @@ class CodeGenerator(object):
             return '\n'.join([self._generate(x) for x in self.node.body])
         elif isinstance(self.node, ast.FunctionDef):
             if not len(self.node.decorator_list) == 0:
-                raise SyntaxNotSupport('Function decoration is not support yet.')
+                raise SyntaxNotSupportError('Function decoration is not support yet.')
             arguments_code = '\n'.join([self._generate(x) + '=$' + str(i + 1) for i, x in enumerate(self.node.args.args)])
             body_code = '\n'.join([self._generate(x) for x in self.node.body])
             return 'function %s() {\n%s\n%s\n}' % (self.node.name, arguments_code, body_code)
@@ -66,9 +67,9 @@ class CodeGenerator(object):
     def generate_call(self, node):
         if hasattr(node, 'kwargs'):
             if not node.kwargs is None:
-                raise SyntaxNotSupport('Keyword arguments is not support yet')
+                raise SyntaxNotSupportError('Keyword arguments is not support yet.')
         elif not len(node.keywords) == 0:
-            raise SyntaxNotSupport('Keyword arguments is not support yet')
+            raise SyntaxNotSupportError('Keyword arguments is not support yet.')
         funciton_name = node.func.id
         arguments_code = ' '.join([self._generate(x) for x in node.args])
         return '%s %s' % (funciton_name, arguments_code)
@@ -77,7 +78,7 @@ class CodeGenerator(object):
         if isinstance(node.op, ast.Add):
             return self._generate(node.left) + '+' + self._generate(node.right)
         else:
-            raise SyntaxNotSupport(node.op.__class__.__name__ + " operation is not support yet.")
+            raise SyntaxNotSupportError(node.op.__class__.__name__ + " operation is not support yet.")
 
     def _generate(self, node):
         if isinstance(node, ast.Assign):

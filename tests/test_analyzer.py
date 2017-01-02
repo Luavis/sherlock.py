@@ -1,12 +1,12 @@
 from codelib.analyzer import CodeAnalyzer
 
 
-def test_simple_anlyzer():
-    code = [
-        'a = 2 + "Hello"',
-    ]
-    analyzer = CodeAnalyzer('\n'.join(code))
-    analyzer.analysis()
+# def test_simple_anlyzer():
+#     code = [
+#         'a = 2 + "Hello"',
+#     ]
+#     analyzer = CodeAnalyzer('\n'.join(code))
+#     print(analyzer.analysis().generate())
 
 
 def test_function_return_type_anlyzer():
@@ -16,4 +16,4 @@ def test_function_return_type_anlyzer():
         'a = echo("Hi")'
     ]
     analyzer = CodeAnalyzer('\n'.join(code))
-    analyzer.analysis()
+    print(analyzer.analysis().generate())
