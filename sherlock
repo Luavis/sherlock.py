@@ -16,15 +16,19 @@ def print_error(msg):
 
 def main():
     args = parser.parse_args()
-    if path.isfile(args.file):
-        script = ''
-        with open(args.file) as f:
-            script = f.read()
-        analyzer = CodeAnalyzer(script)
-        generator = analyzer.analysis()
-        generator.generate()
-    else:
+    try:
+        if path.isfile(args.file):
+            script = ''
+            with open(args.file) as f:
+                script = f.read()
+            analyzer = CodeAnalyzer(script)
+            generator = analyzer.analysis()
+            generator.generate()
+        else:
+            print_error("can't open file '%s'" % args.file)
+    except IOError:
         print_error("can't open file '%s'" % args.file)
+
 
 if __name__ == '__main__':
     main()
