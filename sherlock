@@ -1,0 +1,19 @@
+#!/usr/bin/env python
+""" Main module.
+
+"""
+import ast
+import argparse
+from code.analyzer import CodeAnalyzer
+
+
+parser = argparse.ArgumentParser(description='Python to bash trans-compiler.')
+parser.add_argument('string', metavar='inputs', type=str,
+    help='program read from script file')
+
+def main():
+    args = parser.parse_args()
+    print(args)
+
+if __name__ == '__main__':
+    main()
