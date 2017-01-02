@@ -39,6 +39,10 @@ class Type(object):
 Type.NUMBER = Type(Type._NUMBER)
 Type.STRING = Type(Type._STRING)
 
+class Variable(object):
+    def __init__(self, name, var_type):
+        self.name = name
+        self.var_type = var_type
 
 class CodeAnalyzer(object):
     def __init__(self, code, module_node=None):
@@ -52,8 +56,9 @@ class CodeAnalyzer(object):
 
     def analysis(self):
         for node in self.module_node.body:
+            variable_list = []
             if isinstance(node, ast.Assign):
-                self.get_type(node.value)
+                variable_list = self.get_type(node.value)
 
     def analysis_function(self, function_node, arg_types=[]):
         for node in function_node.body:
