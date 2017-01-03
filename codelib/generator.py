@@ -103,7 +103,7 @@ class CodeGenerator(object):
         elif isinstance(node, ast.FunctionDef):
             generator = CodeGenerator(node=node, context_status=CONTEXT_STATUS_FUNCTION)
             return generator.generate()
-        elif isinstance(node, ast.arg):
+        elif hasattr(ast, 'arg') and isinstance(node, ast.arg):
             return node.arg
         elif isinstance(node, ast.Return):
             return ''
