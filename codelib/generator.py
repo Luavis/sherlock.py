@@ -57,7 +57,7 @@ class CodeGenerator(object):
             if not len(self.node.decorator_list) == 0:
                 raise SyntaxNotSupportError('Function decoration is not support yet.')
 
-            arguments_code = '\n'.join(['local %s=$%i' % (self._generate(x), i + 1) for i, x in enumerate(self.node.args.args)])
+            arguments_code = '\n'.join(['%s=$%i' % (self._generate(x), i + 1) for i, x in enumerate(self.node.args.args)])
             body_code = '\n'.join([self._generate(x) for x in self.node.body])
             return 'function %s() {\n%s\n%s\n}' % (self.node.name, arguments_code, body_code)
         else:
@@ -116,7 +116,7 @@ class CodeGenerator(object):
             generator = CodeGenerator(node=node, context_status=CONTEXT_STATUS_FUNCTION)
             return generator.generate()
         elif hasattr(ast, 'arg') and isinstance(node, ast.arg):
-            return node.arg
+            return 'local ' + node.arg
         elif isinstance(node, ast.Return):
             return ''
         else:
