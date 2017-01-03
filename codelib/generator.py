@@ -64,7 +64,11 @@ class CodeGenerator(object):
             raise CompileError()
 
     def generate_expr(self, node):
-        return self._generate(node.value)
+        # line comment
+        if isinstance(node.value, ast.Str):
+            return ''
+        else:
+            return self._generate(node.value)
 
     def generate_call(self, node):
         if hasattr(node, 'kwargs'):
@@ -118,6 +122,8 @@ class CodeGenerator(object):
         elif hasattr(ast, 'arg') and isinstance(node, ast.arg):
             return 'local ' + node.arg
         elif isinstance(node, ast.Return):
+            import codelib
+            print(codelib.str_ast_node(node))
             return ''
         else:
             raise SyntaxNotSupportError("%s is not support yet." % node.__class__.__name__)

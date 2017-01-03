@@ -3,31 +3,60 @@
 
 """
 import argparse
+import tempfile
 from os import path
+from os import system
 from codelib.analyzer import CodeAnalyzer
 
 
 parser = argparse.ArgumentParser(description='Python to bash trans-compiler.')
-parser.add_argument('file', metavar='script', type=str,
-    help='program read from script file')
+parser.add_argument('input', metavar='[file | command]', type=str, help='program read from script file ')
+parser.add_argument('-o', dest='output', metavar='output', type=str, help='output file path')
+parser.add_argument('-c', '--command', dest='is_command', action='store_true', default=False, help='program passed in as string')
+parser.add_argument('-v', '--verbose', dest='is_verbose', action='store_true', default=False, help='program run in verbose mode')
+parser.add_argument('--version', action='version', version='Sherlock 0.1.0')
+
 
 def print_error(msg):
-    print('sherlock: error: %s' % msg)
+    print('sherlock: %s' % msg)
+
+def save_code(path, code):
+    with open(path, 'w') as f:
+        f.write(code)
+
+def compile_script(script):
+    analyzer = CodeAnalyzer(script)
+    generator = analyzer.analysis()
+    return generator.generate()
 
 def main():
     args = parser.parse_args()
+
     try:
-        if path.isfile(args.file):
-            script = ''
-            with open(args.file) as f:
+        script = ''
+        if args.is_command:
+            script = args.input
+        elif path.isfile(args.input):
+            with open(args.input) as f:
                 script = f.read()
-            analyzer = CodeAnalyzer(script)
-            generator = analyzer.analysis()
-            generator.generate()
         else:
-            print_error("can't open file '%s'" % args.file)
+            print_error("can't open file '%s'" % args.input)
+
+        code = compile_script(script)
+        if args.is_verbose:
+            print(code)
+        if args.output is None:
+            tf = tempfile.NamedTemporaryFile()
+            name = tf.name
+            save_code(name, code)
+            # print('cat %s | bash' % name)
+            system('sh -c "$(cat %s)"' % name)
+        else:
+            save_code(args.output, code)
     except IOError:
-        print_error("can't open file '%s'" % args.file)
+        import sys
+        e = sys.exc_info()[1]
+        print_error("can't open file: %s" % (e))
 
 
 if __name__ == '__main__':
