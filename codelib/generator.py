@@ -77,11 +77,23 @@ class CodeGenerator(object):
         return '%s %s' % (funciton_name, arguments_code)
 
     def generate_binop(self, node):
-        if isinstance(node.op, ast.Add):
-            if self.get_type(node.left).is_number and self.get_type(node.right).is_number:
-                return self._generate(node.left) + '+' + self._generate(node.right)
+        left_type = self.get_type(node.left)
+        right_type = self.get_type(node.right)
+        if left_type.is_number and right_type.is_number:
+            op = ''
+            if isinstance(node.op, ast.Add):
+                op = '+'
+            elif isinstance(node.op, ast.Sub):
+                op = '-'
+            elif isinstance(node.op, ast.Mult):
+                op = '*'
+            elif isinstance(node.op, ast.Div):
+                op = '/'
             else:
-                return self._generate(node.left) + self._generate(node.right)
+                raise SyntaxNotSupportError("%s operation is not support yet." % node.op.__class__.__name__)
+            return '$(( %s %s %s ))' % (self._generate(node.left), op, self._generate(node.right))
+        elif (left_type.is_string or right_type.is_string) and isinstance(node.op, ast.Add):
+            return self._generate(node.left) + self._generate(node.right)
         else:
             raise SyntaxNotSupportError("%s operation is not support yet." % node.op.__class__.__name__)
 
@@ -116,7 +128,11 @@ class CodeGenerator(object):
         elif isinstance(node, ast.Str):
             return Type.STRING
         elif isinstance(node, ast.Name):
-
             return self.variables[node.id].var_type
+        elif isinstance(node, ast.BinOp):
+            if self.get_type(node.left).is_number and self.get_type(node.right).is_number:
+                return Type.NUMBER
+            elif self.get_type(node.left).is_string or self.get_type(node.right).is_string:
+                return Type.STRING
         else:
             return Type.VOID
