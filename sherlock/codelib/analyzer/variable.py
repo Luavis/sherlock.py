@@ -1,4 +1,4 @@
-from errors import CompileError
+from sherlock.errors import CompileError
 
 
 class Type(object):

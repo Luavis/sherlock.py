@@ -1,8 +1,8 @@
 import ast
 import types
-from errors import CompileError, SyntaxNotSupportError
-from codelib.analyzer.variable import Variables, Type
-from codelib.analyzer.function import Functions
+from sherlock.errors import CompileError, SyntaxNotSupportError
+from sherlock.codelib.analyzer.variable import Variables, Type
+from sherlock.codelib.analyzer.function import Functions
 
 
 CONTEXT_STATUS_GLOBAL = 1

@@ -1,12 +1,22 @@
-#!/usr/bin/env python
-""" Main module.
+"""Sherlock: Python to bash transcompiler
 
 """
 import argparse
 import tempfile
 from os import path
 from os import system
-from codelib.analyzer import CodeAnalyzer
+from sherlock.codelib.analyzer import CodeAnalyzer
+
+
+__author__ = "Luavis Kang"
+__copyright__ = "Copyright 2017, Luavis"
+__credits__ = ["Luavis Kang", ]
+__license__ = "MIT"
+__version__ = "0.1.0"
+__status__ = "Development"
+
+__maintainer__ = "Luavis Kang"
+__email__ = "luaviskang@gmail.com"
 
 
 parser = argparse.ArgumentParser(description='Python to bash trans-compiler.')
@@ -29,7 +39,7 @@ def compile_script(script):
     generator = analyzer.analysis()
     return generator.generate()
 
-def main():
+def execute_from_command_line():
     args = parser.parse_args()
 
     try:
@@ -57,7 +67,3 @@ def main():
         import sys
         e = sys.exc_info()[1]
         print_error("can't open file: %s" % (e))
-
-
-if __name__ == '__main__':
-    main()

@@ -1,8 +1,8 @@
 import ast
-from errors import CompileError, SyntaxNotSupportError, ParamTypeMismatchError
-from codelib.generator import CodeGenerator
-from codelib.analyzer.variable import Type, Variable, Variables
-from codelib.analyzer.function import Function, Functions
+from sherlock.errors import CompileError, SyntaxNotSupportError, ParamTypeMismatchError
+from sherlock.codelib.generator import CodeGenerator
+from sherlock.codelib.analyzer.variable import Type, Variable, Variables
+from sherlock.codelib.analyzer.function import Function, Functions
 
 
 class CodeAnalyzer(object):
