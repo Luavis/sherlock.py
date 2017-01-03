@@ -122,7 +122,7 @@ class CodeGenerator(object):
         elif hasattr(ast, 'arg') and isinstance(node, ast.arg):
             return 'local ' + node.arg
         elif isinstance(node, ast.Return):
-            import codelib
+            from sherlock import codelib
             print(codelib.str_ast_node(node))
             return ''
         else:
