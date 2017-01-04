@@ -7,8 +7,6 @@ Sherlock은 Python을 shell script로 바꿔주는 컴파일러입니다. **[WIP
 
 .. contents::
 
-.. section-numbering::
-
 Motivation
 ----------
 
