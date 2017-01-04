@@ -1,7 +1,7 @@
 Sherlock
 ========
 
-|pypi| |travis-ci| |Code Climate| |Test Coverage| |Open Source Love|
+|pypi| |pypi-version| |travis-ci| |Code Climate| |Test Coverage| |Open Source Love|
 
 .. image:: http://i.imgur.com/n8xH4Wd.png?1
    :target: https://github.com/Luavis/sherlock
