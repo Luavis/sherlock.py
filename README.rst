@@ -1,7 +1,7 @@
 Sherlock
 ========
 
-|travis-ci| |Code Climate| |Test Coverage| |Open Source Love|
+|pypi| |travis-ci| |Code Climate| |Test Coverage| |Open Source Love|
 
 Sherlock은 Python을 shell script로 바꿔주는 컴파일러입니다. **[WIP]**
 
