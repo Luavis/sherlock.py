@@ -65,17 +65,44 @@ def test_simple_numeric_operation_with_function_call():
         '    return 1',
         'b = a() + 3',
     ]
-    assert analysis_code_list(code) == 'export a=$(( 2 + $(( $(( $(( 3 - 4 )) * 6 )) / 2 )) ))'
+    assert analysis_code_list(code) == """function a() {
 
-# def test_complex_numeric_operation_with_function_call():
-#     code = [
-#         'def a():',
-#         '    return 1',
-#         'def b():',
-#         '   return 2',
-#         'c = b() + (3 - a()) * 6 / 2',
-#     ]
-#     assert analysis_code_list(code) == 'export a=$(( 2 + $(( $(( $(( 3 - 4 )) * 6 )) / 2 )) ))'
+export __return_a=1
+}
+a
+__temp_var_1=$__return_a
+export b=$(( $__temp_var_1 + 3 ))"""
+
+def test_complex_numeric_operation_with_function_call():
+    code = [
+        'def a():',
+        '    return 1',
+        'c = 3 - a()',
+    ]
+    assert analysis_code_list(code) == """function a() {
+
+export __return_a=1
+}
+a
+__temp_var_1=$__return_a
+export c=$(( 3 - $__temp_var_1 ))"""
+
+def test_complex_numeric_operation_with_function_call():
+    code = [
+        'def a():',
+        '    return 1',
+        'def b():',
+        '   return 2',
+        'c = b() + (3 - a()) * 6 / 2',
+    ]
+    print(analysis_code_list(code))
+#     assert analysis_code_list(code) == """function a() {
+# export __return_a=1
+# }
+# function b() {
+# export __return_b=2
+# }
+# export c=$(( b  + $(( $(( $(( 3 - a  )) * 6 )) / 2 )) ))"""
 
 def test_function_parameter_type_mismatch():
     try:

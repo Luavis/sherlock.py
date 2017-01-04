@@ -38,7 +38,7 @@ class CodeGenerator(object):
         self.code = code
         self.node = node
         self.variables = variables
-        self.temp_variable = TempVariableManager('_return_data')
+        self.temp_variable = TempVariableManager('__temp_var')
 
     @property
     def is_global(self):
@@ -52,13 +52,15 @@ class CodeGenerator(object):
             raise CompileError()
 
         if isinstance(node.value, ast.Call):
-            from sherlock.codelib import str_ast_node
             return '%s\n%s=$__return_%s' % (self._generate(node.value), target_code, node.value.func.id)
         else:
-            value_code = self._generate(node.value)
+            ext_info = {}
+            value_code = self._generate(node.value, ext_info)
+            extra_code = ext_info.get('extra_code', '')
             if value_code is None:
                 raise CompileError()
-            return target_code + '=' + value_code
+
+            return extra_code + target_code + '=' + value_code
 
     def generate_name(self, node):
         if isinstance(node.ctx, ast.Store) or isinstance(node.ctx, ast.Param):
@@ -95,13 +97,19 @@ class CodeGenerator(object):
         elif not len(node.keywords) == 0:
             raise SyntaxNotSupportError('Keyword arguments is not support yet.')
         funciton_name = node.func.id
+        if len(node.args) is 0:
+            return '%s' % funciton_name
         arguments_code = ' '.join([self._generate(x) for x in node.args])
         return '%s %s' % (funciton_name, arguments_code)
 
-    def generate_binop(self, node):
+    def generate_binop(self, node, ext_info):
         left_type = self.get_type(node.left)
         right_type = self.get_type(node.right)
-        print(left_type)
+        extra_code = ext_info['extra_code']
+
+        if left_type.is_void or right_type.is_void:
+            raise CompileError('Void type is not able to operate.')
+
         if left_type.is_number and right_type.is_number:
             op = ''
             if isinstance(node.op, ast.Add):
@@ -114,9 +122,41 @@ class CodeGenerator(object):
                 op = '/'
             else:
                 raise SyntaxNotSupportError("%s operation is not support yet." % node.op.__class__.__name__)
-            return '$(( %s %s %s ))' % (self._generate(node.left), op, self._generate(node.right))
+
+            if isinstance(node.left, ast.Call):
+                left_name = self.temp_variable.get_new_name()
+                _ext_info = {'extra_code': extra_code}
+                _temp = '%s\n' % self._generate(node.left,  _ext_info)
+                extra_code = _ext_info['extra_code'] + _temp
+
+                extra_code += '%s=$__return_%s\n' % (left_name, node.left.func.id)
+                left_name = '$%s' % left_name
+            else:
+                _ext_info = {'extra_code': extra_code}
+                left_name = self._generate(node.left, _ext_info)
+                extra_code = _ext_info['extra_code']
+
+
+            if isinstance(node.right, ast.Call):
+                right_name = self.temp_variable.get_new_name()
+                _ext_info = {'extra_code': extra_code}
+                _temp = '%s\n' % self._generate(node.right, _ext_info)
+                extra_code = _ext_info['extra_code'] + _temp
+
+                extra_code += '%s=$__return_%s\n' % (right_name, node.right.func.id)
+                right_name = '$%s' % right_name
+            else:
+                _ext_info = {'extra_code': extra_code}
+                right_name = self._generate(node.right, _ext_info)
+                extra_code = _ext_info['extra_code']
+
+            return '$(( %s %s %s ))' % (left_name, op, right_name), extra_code
         elif (left_type.is_string or right_type.is_string) and isinstance(node.op, ast.Add):
-            return self._generate(node.left) + self._generate(node.right)
+            _ext_info = {'extra_code': extra_code}
+            left = self._generate(node.left, _ext_info)
+            right = self._generate(node.right, _ext_info)
+
+            return left + right, _ext_info['extra_code']
         else:
             raise SyntaxNotSupportError("%s operation is not support yet." % node.op.__class__.__name__)
 
@@ -132,7 +172,11 @@ class CodeGenerator(object):
         elif isinstance(node, ast.Num):
             return str(node.n)
         elif isinstance(node, ast.BinOp):
-            return self.generate_binop(node)
+            if ext_info.get('extra_code') is None:
+                ext_info['extra_code'] = ''
+
+            ret, ext_info['extra_code'] = self.generate_binop(node, ext_info)
+            return ret
         elif isinstance(node, ast.Str):
             return '"' + node.s.replace('"','\\"') + '"'
         elif isinstance(node, ast.FunctionDef):
@@ -157,5 +201,7 @@ class CodeGenerator(object):
                 return Type.NUMBER
             elif self.get_type(node.left).is_string or self.get_type(node.right).is_string:
                 return Type.STRING
+        elif isinstance(node, ast.Call):
+            return self.functions[node.func.id].return_type
         else:
             return Type.VOID
