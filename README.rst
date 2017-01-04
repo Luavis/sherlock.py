@@ -5,6 +5,22 @@ Sherlock
 
 Sherlock은 Python을 shell script로 바꿔주는 컴파일러입니다. **[WIP]**
 
+.. contents::
+
+.. section-numbering::
+
+Motivation
+----------
+
+.. figure:: http://i.imgur.com/7blJGwc.jpg
+    :alt: map to buried treasure
+    :width: 100%
+    :align: center
+
+    < Shell script를 작성하는 명탐정의 모습 >
+
+Shell script는 많은 Unix-like 운영체제에서 보편적으로 사용되는 script language입니다. 이 언어는 Unix-like 운영체제에서 동작이 보장되어 많은 사람들이 Install script나 configure 스크립트에 사용됩니다. 하지만 개발된지 오래되어 다양한 `문제가 <http://teaching.idallen.com/cst8207/16w/notes/740_script_problems.html>`_ 있고 유지보수에 문제가 있습니다.
+
 Install
 -------
 
