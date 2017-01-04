@@ -3,7 +3,13 @@ Sherlock
 
 |pypi| |travis-ci| |Code Climate| |Test Coverage| |Open Source Love|
 
-Sherlock은 Python을 shell script로 바꿔주는 컴파일러입니다. **[WIP]**
+.. image:: http://i.imgur.com/n8xH4Wd.png?1
+   :target: https://github.com/Luavis/sherlock
+   :align: center
+   :alt: sherlock
+
+Sherlock은 Python으로 작성한 코드를 shell script언어로 바꿔주는 transpiler입니다. **[WIP]**
+
 
 .. contents::
 
@@ -76,9 +82,12 @@ Usage
 License
 -------
 
-MIT © `Luavis Kang <https://github.com/Luavis>`__
+- MIT © 2017 `Luavis <https://github.com/Luavis>`__
+- Icon designed by `cyoh <https://github.com/cyoh>`_ Sherlock Holmes graphic by Matthew Davis from the Noun Project
 
-.. |pypi| image:: https://img.shields.io/pypi/v/sherlock.py.svg?style=flat-square
+.. |pypi| image:: https://img.shields.io/pypi/v/sherlock.py.svg
+   :target: https://pypi.python.org/pypi/sherlock.py
+.. |pypi-version| image:: https://img.shields.io/pypi/pyversions/sherlock.py.svg
    :target: https://pypi.python.org/pypi/sherlock.py
 .. |travis-ci| image:: https://travis-ci.org/Luavis/sherlock.svg?branch=master
    :target: https://travis-ci.org/Luavis/sherlock
