@@ -52,12 +52,15 @@ class CodeAnalyzer(object):
             else:
                 raise ParamTypeMismatchError("Function '%s' parameter type is not match", function_name)
         else:
+
             for node in self.module_node.body:
                 if isinstance(node, ast.FunctionDef) and node.name == function_name:
                     generator, return_type = self.analysis_function(node, arg_types)
-                self.functions.append(Function(function_name, arg_types, return_type, generator))
+                    self.functions.append(Function(function_name, arg_types, return_type, generator))
+                    return return_type
 
-            return return_type
+            # when function is not exist: string
+            return Type.STRING
 
     def get_type(self, node):
         if isinstance(node, ast.BinOp):

@@ -8,6 +8,20 @@ from sherlock.codelib.analyzer.function import Functions
 CONTEXT_STATUS_GLOBAL = 1
 CONTEXT_STATUS_FUNCTION = 2
 
+
+class TempVariableManager(object):
+
+    def __init__(self, prefix_name):
+        self.prefix_name = prefix_name
+        self.variable_id = 0
+
+    def get_new_name(self):
+        self.variable_id += 1
+        return self.get_last_variable_name()
+
+    def get_last_variable_name(self):
+        return '%s_%d' % (self.prefix_name, self.variable_id)
+
 class CodeGenerator(object):
 
     def __init__(
@@ -24,7 +38,7 @@ class CodeGenerator(object):
         self.code = code
         self.node = node
         self.variables = variables
-        self.return_data_code = []
+        self.temp_variable = TempVariableManager('_return_data')
 
     @property
     def is_global(self):
@@ -37,10 +51,14 @@ class CodeGenerator(object):
         else:
             raise CompileError()
 
-        value_code = self._generate(node.value)
-        if value_code is None:
-            raise CompileError()
-        return target_code + '=' + value_code
+        if isinstance(node.value, ast.Call):
+            from sherlock.codelib import str_ast_node
+            return '%s\n%s=$__return_%s' % (self._generate(node.value), target_code, node.value.func.id)
+        else:
+            value_code = self._generate(node.value)
+            if value_code is None:
+                raise CompileError()
+            return target_code + '=' + value_code
 
     def generate_name(self, node):
         if isinstance(node.ctx, ast.Store) or isinstance(node.ctx, ast.Param):
@@ -58,7 +76,7 @@ class CodeGenerator(object):
                 raise SyntaxNotSupportError('Function decoration is not support yet.')
 
             arguments_code = '\n'.join(['%s=$%i' % (self._generate(x), i + 1) for i, x in enumerate(self.node.args.args)])
-            body_code = '\n'.join([self._generate(x) for x in self.node.body])
+            body_code = '\n'.join([self._generate(x, {'func_name': self.node.name}) for x in self.node.body])
             return 'function %s() {\n%s\n%s\n}' % (self.node.name, arguments_code, body_code)
         else:
             raise CompileError()
@@ -83,6 +101,7 @@ class CodeGenerator(object):
     def generate_binop(self, node):
         left_type = self.get_type(node.left)
         right_type = self.get_type(node.right)
+        print(left_type)
         if left_type.is_number and right_type.is_number:
             op = ''
             if isinstance(node.op, ast.Add):
@@ -101,7 +120,7 @@ class CodeGenerator(object):
         else:
             raise SyntaxNotSupportError("%s operation is not support yet." % node.op.__class__.__name__)
 
-    def _generate(self, node):
+    def _generate(self, node, ext_info={}):
         if isinstance(node, ast.Assign):
             return self.generate_assign(node)
         elif isinstance(node, ast.Name):
@@ -122,9 +141,7 @@ class CodeGenerator(object):
         elif hasattr(ast, 'arg') and isinstance(node, ast.arg):
             return 'local ' + node.arg
         elif isinstance(node, ast.Return):
-            from sherlock import codelib
-            print(codelib.str_ast_node(node))
-            return ''
+            return 'export __return_%s=%s' % (ext_info['func_name'], self._generate(node.value))
         else:
             raise SyntaxNotSupportError("%s is not support yet." % node.__class__.__name__)
 

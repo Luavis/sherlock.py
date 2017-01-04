@@ -40,17 +40,42 @@ def test_complex_numeric_operation():
     ]
     assert analysis_code_list(code) == 'export a=$(( 2 + $(( $(( $(( 3 - 4 )) * 6 )) / 2 )) ))'
 
+def test_run_command_line_command():
+    code = [
+        'git("commit", "-m", "Hello")',
+    ]
+    assert analysis_code_list(code) == 'git "commit" "-m" "Hello"'
+
 def test_function_return_type_anlyzer():
     code = [
-        "def echo(msg):",
-        "    return 1",
+        'def echo(msg):',
+        '    return 1',
         'a = echo("Hi")'
     ]
     assert analysis_code_list(code) == """function echo() {
 local msg=$1
-
+export __return_echo=1
 }
-export a=echo "Hi\""""
+echo "Hi"
+export a=$__return_echo"""
+
+def test_simple_numeric_operation_with_function_call():
+    code = [
+        'def a():',
+        '    return 1',
+        'b = a() + 3',
+    ]
+    assert analysis_code_list(code) == 'export a=$(( 2 + $(( $(( $(( 3 - 4 )) * 6 )) / 2 )) ))'
+
+# def test_complex_numeric_operation_with_function_call():
+#     code = [
+#         'def a():',
+#         '    return 1',
+#         'def b():',
+#         '   return 2',
+#         'c = b() + (3 - a()) * 6 / 2',
+#     ]
+#     assert analysis_code_list(code) == 'export a=$(( 2 + $(( $(( $(( 3 - 4 )) * 6 )) / 2 )) ))'
 
 def test_function_parameter_type_mismatch():
     try:
