@@ -1,5 +1,5 @@
 from sherlock.errors import CompileError
-
+from sherlock.codelib.analyzer.factory import ListManagerFactory
 
 class Type(object):
     _VOID = 0
@@ -46,15 +46,5 @@ class Variable(object):
     def __repr__(self):
         return 'Var(name=%s, type=%s)' % (self.name, repr(self.var_type))
 
-class Variables(object):
-    def __init__(self):
-        self.list = {}
-
-    def __getitem__(self, name):
-        return self.list.get(name)
-
-    def append(self, variable):
-        self.list[variable.name] = variable
-
-    def __repr__(self):
-        return repr(self.list)
+class Variables(ListManagerFactory):
+    pass
