@@ -96,13 +96,19 @@ def test_complex_numeric_operation_with_function_call():
         'c = b() + (3 - a()) * 6 / 2',
     ]
     print(analysis_code_list(code))
-#     assert analysis_code_list(code) == """function a() {
-# export __return_a=1
-# }
-# function b() {
-# export __return_b=2
-# }
-# export c=$(( b  + $(( $(( $(( 3 - a  )) * 6 )) / 2 )) ))"""
+    assert analysis_code_list(code) == """function a() {
+
+export __return_a=1
+}
+function b() {
+
+export __return_b=2
+}
+b
+__temp_var_1=$__return_b
+a
+__temp_var_2=$__return_a
+export c=$(( $__temp_var_1 + $(( $(( $(( 3 - $__temp_var_2 )) * 6 )) / 2 )) ))"""
 
 def test_function_parameter_type_mismatch():
     try:
