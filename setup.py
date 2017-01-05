@@ -30,7 +30,7 @@ def install():
             'Programming Language :: Python :: 3.4',
             'Programming Language :: Python :: 3.5',
             'Programming Language :: Python :: 3.6',],
-        packages=find_packages(exclude=('tests', )),
+        packages=find_packages(exclude=('tests', 'samples', )),
         entry_points={'console_scripts': [
             'sherlock = sherlock:execute_from_command_line',
         ]},
