@@ -1,4 +1,5 @@
 from functools import reduce
+from sherlock.codelib.analyzer.factory import ListManagerFactory
 
 
 class Function(object):

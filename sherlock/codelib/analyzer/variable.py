@@ -1,6 +1,7 @@
 from sherlock.errors import CompileError
 from sherlock.codelib.analyzer.factory import ListManagerFactory
 
+
 class Type(object):
     _VOID = 0
     _NUMBER = 1
