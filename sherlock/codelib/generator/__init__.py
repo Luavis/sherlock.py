@@ -3,24 +3,12 @@ import types
 from sherlock.errors import CompileError, SyntaxNotSupportError
 from sherlock.codelib.analyzer.variable import Variables, Type
 from sherlock.codelib.analyzer.function import Functions
-
+from sherlock.codelib.generator.temp_variable import TempVariableManager
+from sherlock.codelib.generator.binop import generate_binop
 
 CONTEXT_STATUS_GLOBAL = 1
 CONTEXT_STATUS_FUNCTION = 2
 
-
-class TempVariableManager(object):
-
-    def __init__(self, prefix_name):
-        self.prefix_name = prefix_name
-        self.variable_id = 0
-
-    def get_new_name(self):
-        self.variable_id += 1
-        return self.get_last_variable_name()
-
-    def get_last_variable_name(self):
-        return '%s_%d' % (self.prefix_name, self.variable_id)
 
 class CodeGenerator(object):
 
@@ -84,8 +72,8 @@ class CodeGenerator(object):
             raise CompileError()
 
     def generate_expr(self, node):
-        # line comment
         if isinstance(node.value, ast.Str):
+            # remove line comment
             return ''
         else:
             return self._generate(node.value)
@@ -102,64 +90,6 @@ class CodeGenerator(object):
         arguments_code = ' '.join([self._generate(x) for x in node.args])
         return '%s %s' % (funciton_name, arguments_code)
 
-    def generate_binop(self, node, ext_info):
-        left_type = self.get_type(node.left)
-        right_type = self.get_type(node.right)
-        extra_code = ext_info['extra_code']
-
-        if left_type.is_void or right_type.is_void:
-            raise CompileError('Void type is not able to operate.')
-
-        if left_type.is_number and right_type.is_number:
-            op = ''
-            if isinstance(node.op, ast.Add):
-                op = '+'
-            elif isinstance(node.op, ast.Sub):
-                op = '-'
-            elif isinstance(node.op, ast.Mult):
-                op = '*'
-            elif isinstance(node.op, ast.Div):
-                op = '/'
-            else:
-                raise SyntaxNotSupportError("%s operation is not support yet." % node.op.__class__.__name__)
-
-            if isinstance(node.left, ast.Call):
-                left_name = self.temp_variable.get_new_name()
-                _ext_info = {'extra_code': extra_code}
-                _temp = '%s\n' % self._generate(node.left,  _ext_info)
-                extra_code = _ext_info['extra_code'] + _temp
-
-                extra_code += '%s=$__return_%s\n' % (left_name, node.left.func.id)
-                left_name = '$%s' % left_name
-            else:
-                _ext_info = {'extra_code': extra_code}
-                left_name = self._generate(node.left, _ext_info)
-                extra_code = _ext_info['extra_code']
-
-
-            if isinstance(node.right, ast.Call):
-                right_name = self.temp_variable.get_new_name()
-                _ext_info = {'extra_code': extra_code}
-                _temp = '%s\n' % self._generate(node.right, _ext_info)
-                extra_code = _ext_info['extra_code'] + _temp
-
-                extra_code += '%s=$__return_%s\n' % (right_name, node.right.func.id)
-                right_name = '$%s' % right_name
-            else:
-                _ext_info = {'extra_code': extra_code}
-                right_name = self._generate(node.right, _ext_info)
-                extra_code = _ext_info['extra_code']
-
-            return '$(( %s %s %s ))' % (left_name, op, right_name), extra_code
-        elif (left_type.is_string or right_type.is_string) and isinstance(node.op, ast.Add):
-            _ext_info = {'extra_code': extra_code}
-            left = self._generate(node.left, _ext_info)
-            right = self._generate(node.right, _ext_info)
-
-            return left + right, _ext_info['extra_code']
-        else:
-            raise SyntaxNotSupportError("%s operation is not support yet." % node.op.__class__.__name__)
-
     def _generate(self, node, ext_info={}):
         if isinstance(node, ast.Assign):
             return self.generate_assign(node)
@@ -175,7 +105,7 @@ class CodeGenerator(object):
             if ext_info.get('extra_code') is None:
                 ext_info['extra_code'] = ''
 
-            ret, ext_info['extra_code'] = self.generate_binop(node, ext_info)
+            ret, ext_info['extra_code'] = generate_binop(self, node, ext_info)
             return ret
         elif isinstance(node, ast.Str):
             return '"' + node.s.replace('"','\\"') + '"'
