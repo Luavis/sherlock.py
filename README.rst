@@ -79,6 +79,8 @@ Usage
 ``-c``\ 플래그를 사용하면 입력한 커맨드가 즉시 bash로 컴파일 되고 이를
 실행합니다.
 
+자세한 사용예는 `samples <https://github.com/Luavis/sherlock/tree/master/samples>`_에서 확인해주세요
+
 License
 -------
 
