@@ -8,9 +8,10 @@ Sherlock
    :align: center
    :alt: sherlock
 
-Sherlock is transpiler that translate python to shell script language.
+Sherlock은 Python으로 작성한 코드를 shell script언어로 바꿔주는 transpiler입니다.
 
-`한국어로 보기 <https://github.com/Luavis/sherlock/tree/master/README.ko.rst>`_
+`English <https://github.com/Luavis/sherlock/tree/master/README.rst>`_
+
 
 .. contents::
 
@@ -22,9 +23,9 @@ Motivation
     :width: 100%
     :align: center
 
-    < Ditective who program with Shell script >
+    < Shell script를 작성하는 명탐정의 모습 >
 
-Shell script is well known script language which is used in most of unix-like OS. Shell script lanuage garuntee to run in most unix-like OS. So many software developers are using this language when they program install script or configuration script. Because this language is really old, There are several `problems <http://teaching.idallen.com/cst8207/16w/notes/740_script_problems.html>`_. and it is hard to maintain program which is writted by Shell script language.
+Shell script는 많은 Unix-like 운영체제에서 보편적으로 사용되는 script language입니다. 이 언어는 Unix-like 운영체제에서 동작이 보장되어 많은 사람들이 Install script나 configure 스크립트에 사용됩니다. 하지만 개발된지 오래되어 다양한 `문제가 <http://teaching.idallen.com/cst8207/16w/notes/740_script_problems.html>`_ 있고 유지보수에 문제가 있습니다.
 
 Install
 -------
@@ -33,7 +34,9 @@ Install
 
     $ pip install sherlock.py
 
-Sherlock support python version over 2.6 or 3.3. and support linux and macOS. If there is error in install please write issue.
+Sherlock은 python버전 2.6 이상, 3.3 이상에서 동작을 보장하고 Linux 계열
+운영체제와 macOS에서 동작을 보장합니다. 그 이외의 운영체제 혹은 버전에
+대해서 문제가 있으면 issue를 남겨주세요.
 
 Usage
 -----
@@ -54,29 +57,31 @@ Usage
       -v, --verbose     program run in verbose mode
       --version         show program's version number and exit
 
-Following is basic usage.
+다음은 기본적인 사용 예제입니다.
 
 .. code:: sh
 
     $ sherlock target.py
 
-Using this command, target.py file is translated into shell sciprt. after, it is automatically run
-using``sh``. We can find out bug from the running result.
+위 커맨드를 사용하면 target.py를 shell script로 컴파일하고 이를 ``sh``
+명령어를 이용하여 실행합니다. 실행 결과를 통해서 내가 작성하고 있는
+코드가 shell script로 잘 컴파일 되는지 확인하고 디버깅할 수 있습니다.
 
 .. code:: sh
 
     $ sherlock target.py -o output.sh
 
-Using ``-o`` flag, you can save sherlock result in file. In this case script isn't run automatically.
+``-o``\ 플래그를 통해 sherlock의 결과물을 파일로 저장할 수 있습니다. 이
+경우 유저가 작성한 스크립트가 실행되지 않습니다.
 
 .. code:: sh
 
     $ sherlock -c "echo 'Hello World.'"
 
-Using ``-c`` flag, input command is immediately translated to shell script language and executed.
+``-c``\ 플래그를 사용하면 입력한 커맨드가 즉시 bash로 컴파일 되고 이를
+실행합니다.
 
-
-If you want to details. Please check `sample codes <https://github.com/Luavis/sherlock/tree/master/samples>`__ 
+자세한 사용예는 `samples <https://github.com/Luavis/sherlock/tree/master/samples>`__ 에서 확인해주세요
 
 License
 -------
