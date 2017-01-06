@@ -25,7 +25,7 @@ Motivation
 
     < Shell script를 작성하는 명탐정의 모습 >
 
-Shell script는 많은 Unix-like 운영체제에서 보편적으로 사용되는 script language입니다. 이 언어는 Unix-like 운영체제에서 동작이 보장되어 많은 사람들이 Install script나 configure 스크립트에 사용됩니다. 하지만 개발된지 오래되어 다양한 `문제가 <http://teaching.idallen.com/cst8207/16w/notes/740_script_problems.html>`_ 있고 유지보수에 문제가 있습니다.
+Shell script는 많은 Unix-like 운영체제에서 보편적으로 사용되는 script language입니다. 이 언어는 Unix-like 운영체제에서 동작이 보장되어 많은 사람들이 Install script나 configure 스크립트에 사용됩니다. 하지만 개발된지 오래되어 다양한 `문제가 <http://teaching.idallen.com/cst8207/16w/notes/740_script_problems.html>`_ 있고 유지보수가 어렵습니다.
 
 Install
 -------
@@ -35,8 +35,7 @@ Install
     $ pip install sherlock.py
 
 Sherlock은 python버전 2.6 이상, 3.3 이상에서 동작을 보장하고 Linux 계열
-운영체제와 macOS에서 동작을 보장합니다. 그 이외의 운영체제 혹은 버전에
-대해서 문제가 있으면 issue를 남겨주세요.
+운영체제와 macOS에서 동작을 보장합니다. 해당 버전과 운영체제에 대해서 문제가 있으면 issue를 남겨주세요.
 
 Usage
 -----
@@ -71,15 +70,13 @@ Usage
 
     $ sherlock target.py -o output.sh
 
-``-o``\ 플래그를 통해 sherlock의 결과물을 파일로 저장할 수 있습니다. 이
-경우 유저가 작성한 스크립트가 실행되지 않습니다.
+``-o``\ 플래그를 통해 sherlock의 결과물을 파일로 저장할 수 있습니다. 이 경우 유저가 작성한 스크립트가 실행되지 않습니다.
 
 .. code:: sh
 
     $ sherlock -c "echo 'Hello World.'"
 
-``-c``\ 플래그를 사용하면 입력한 커맨드가 즉시 bash로 컴파일 되고 이를
-실행합니다.
+``-c``\ 플래그를 사용하면 입력한 커맨드가 즉시 ``sh``로 컴파일 되고 이를 실행합니다.
 
 자세한 사용예는 `samples <https://github.com/Luavis/sherlock/tree/master/samples>`__ 에서 확인해주세요
 

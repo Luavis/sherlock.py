@@ -75,7 +75,6 @@ Using ``-o`` flag, you can save sherlock result in file. In this case script isn
 
 Using ``-c`` flag, input command is immediately translated to shell script language and executed.
 
-
 If you want to details. Please check `sample codes <https://github.com/Luavis/sherlock/tree/master/samples>`__ 
 
 License
