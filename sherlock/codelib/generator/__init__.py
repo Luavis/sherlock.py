@@ -27,6 +27,7 @@ class CodeGenerator(object):
         self.node = node
         self.variables = variables
         self.temp_variable = TempVariableManager('__temp_var')
+        self.code_buffer = []
 
     @property
     def is_global(self):
@@ -60,16 +61,19 @@ class CodeGenerator(object):
         if self.node is None:
             self.node = ast.parse(self.code)
         if isinstance(self.node, ast.Module):
-            return '\n'.join([self._generate(x) for x in self.node.body])
+            for x in self.node.body:
+                self.code_buffer.append(self._generate(x))
+            return '\n'.join(self.code_buffer) + '\n'
         elif isinstance(self.node, ast.FunctionDef):
             if not len(self.node.decorator_list) == 0:
                 raise SyntaxNotSupportError('Function decoration is not support yet.')
 
             arguments_code = '\n'.join(['%s=$%i' % (self._generate(x), i + 1) for i, x in enumerate(self.node.args.args)])
-            body_code = '\n'.join([self._generate(x, {'func_name': self.node.name}) for x in self.node.body])
-            return 'function %s() {\n%s\n%s\n}' % (self.node.name, arguments_code, body_code)
+            for x in self.node.body:
+                self.code_buffer.append(self._generate(x, {'func_name': self.node.name}))
+            return 'function %s() {\n%s\n%s\n}' % (self.node.name, arguments_code, '\n'.join(self.code_buffer))
         else:
-            raise CompileError()
+            raise CompileError("code section must be function or module node")
 
     def generate_expr(self, node):
         if isinstance(node.value, ast.Str):
@@ -87,7 +91,16 @@ class CodeGenerator(object):
         funciton_name = node.func.id
         if len(node.args) is 0:
             return '%s' % funciton_name
-        arguments_code = ' '.join([self._generate(x) for x in node.args])
+        argument_list = []
+        for x in node.args:
+            if isinstance(x, ast.Call):
+                new_temp_variable = self.temp_variable.get_new_name()
+                self.code_buffer.append(self._generate(x))
+                self.code_buffer.append('%s=$__return_%s' % (new_temp_variable, x.func.id))
+                argument_list.append(new_temp_variable)
+            else:
+                argument_list.append(self._generate(x))
+        arguments_code = ' '.join(argument_list)
         return '%s %s' % (funciton_name, arguments_code)
 
     def _generate(self, node, ext_info={}):
@@ -98,6 +111,7 @@ class CodeGenerator(object):
         elif isinstance(node, ast.Expr):
             return self.generate_expr(node)
         elif isinstance(node, ast.Call):
+            # self.code_buffer += '__return_%s' % node.func.id
             return self.generate_call(node)
         elif isinstance(node, ast.Num):
             return str(node.n)
