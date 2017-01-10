@@ -1,4 +1,4 @@
-Sherlock
+Sherlock.py
 ========
 
 |wip| |pypi| |pypi-version| |travis-ci| |Code Climate| |Test Coverage| |Open Source Love|
@@ -6,9 +6,9 @@ Sherlock
 .. image:: http://i.imgur.com/n8xH4Wd.png?1
    :target: https://github.com/Luavis/sherlock
    :align: center
-   :alt: sherlock
+   :alt: sherlock.py
 
-Sherlock은 Python으로 작성한 코드를 shell script언어로 바꿔주는 transpiler입니다.
+sherlock.py은 Python으로 작성한 코드를 shell script언어로 바꿔주는 transpiler입니다.
 
 `English <https://github.com/Luavis/sherlock/tree/master/README.rst>`_
 
@@ -34,7 +34,7 @@ Install
 
     $ pip install sherlock.py
 
-Sherlock은 python버전 2.6 이상, 3.3 이상에서 동작을 보장하고 Linux 계열
+sherlock.py은 python버전 2.6 이상, 3.3 이상에서 동작을 보장하고 Linux 계열
 운영체제와 macOS에서 동작을 보장합니다. 해당 버전과 운영체제에 대해서 문제가 있으면 issue를 남겨주세요.
 
 Usage
@@ -78,13 +78,13 @@ Usage
 
 ``-c``\ 플래그를 사용하면 입력한 커맨드가 즉시 ``sh``로 컴파일 되고 이를 실행합니다.
 
-자세한 사용예는 `samples <https://github.com/Luavis/sherlock/tree/master/samples>`__ 에서 확인해주세요
+자세한 사용예는 `samples <https://github.com/Luavis/sherlock.py/tree/master/samples>`__ 에서 확인해주세요
 
 License
 -------
 
 - MIT © 2017 `Luavis <https://github.com/Luavis>`__
-- Icon designed by `cyoh <https://github.com/cyoh>`_ Sherlock Holmes graphic by Matthew Davis from the Noun Project
+- Icon designed by `cyoh <https://github.com/cyoh>`_, Sherlock Holmes graphic by Matthew Davis from the Noun Project
 
 .. |wip| image:: https://img.shields.io/badge/status-WIP-red.svg
 .. |pypi| image:: https://img.shields.io/pypi/v/sherlock.py.svg
