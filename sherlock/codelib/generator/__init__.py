@@ -27,7 +27,7 @@ class CodeGenerator(object):
         self.node = node
         self.variables = variables
         self.temp_variable = TempVariableManager('__temp_var')
-        self.code_buffer = []
+        self.code_buffer = ['#!/usr/bin/env bash']
 
     @property
     def is_global(self):

@@ -1,10 +1,10 @@
 """Sherlock: Python to bash transcompiler
 
 """
+import stat
 import argparse
 import tempfile
-from os import path
-from os import system
+from os import path, system, chmod
 from sherlock.codelib.analyzer import CodeAnalyzer
 
 
@@ -33,6 +33,7 @@ def print_error(msg):
 def save_code(path, code):
     with open(path, 'w') as f:
         f.write(code)
+    chmod(path, stat.S_IRWXU | stat.S_IRGRP | stat.S_IROTH)
 
 def compile_script(script):
     analyzer = CodeAnalyzer(script)
@@ -67,3 +68,7 @@ def execute_from_command_line():
         import sys
         e = sys.exc_info()[1]
         print_error("can't open file: %s" % (e))
+
+
+if __name__ == '__main__':
+    execute_from_command_line()
