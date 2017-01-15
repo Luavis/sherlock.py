@@ -88,8 +88,8 @@ License
    :target: https://pypi.python.org/pypi/sherlock.py
 .. |pypi-version| image:: https://img.shields.io/pypi/pyversions/sherlock.py.svg
    :target: https://pypi.python.org/pypi/sherlock.py
-.. |travis-ci| image:: https://travis-ci.org/Luavis/sherlock.svg?branch=master
-   :target: https://travis-ci.org/Luavis/sherlock
+.. |travis-ci| image:: https://travis-ci.org/Luavis/sherlock.py.svg?branch=master
+   :target: https://travis-ci.org/Luavis/sherlock.py
 .. |Code Climate| image:: https://codeclimate.com/github/Luavis/sherlock/badges/gpa.svg
    :target: https://codeclimate.com/github/Luavis/sherlock
 .. |Test Coverage| image:: https://codeclimate.com/github/Luavis/sherlock/badges/coverage.svg
