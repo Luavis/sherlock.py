@@ -32,6 +32,7 @@ def print_error(msg):
 
 def save_code(path, code):
     with open(path, 'w') as f:
+        f.write("#!/usr/bin/env bash\n")
         f.write(code)
     chmod(path, stat.S_IRWXU | stat.S_IRGRP | stat.S_IROTH)
 
