@@ -24,7 +24,7 @@ class CodeAnalyzer(object):
         generator = CodeGenerator(self.code, functions=self.functions, variables=self.variables)
         return generator
 
-    def analysis_function(self, function_node, arg_types=[]):
+    def analysis_function(self, function_node, args_type=[]):
         variables = Variables()
         return_type = Type.VOID
 
@@ -44,10 +44,10 @@ class CodeAnalyzer(object):
         target = node.targets[0]
         variables.append(Variable(name=target.id, var_type=self.get_type(node.value)))
 
-    def get_function_return_type(self, function_name, arg_types=[]):
+    def get_function_return_type(self, function_name, args_type=[]):
         function = self.functions[function_name]
         if function is not None:
-            if function.is_arg_types_match(arg_types):
+            if function.is_args_type_match(args_type):
                 return function.return_type
             else:
                 raise ParamTypeMismatchError("Function '%s' parameter type is not match", function_name)
@@ -55,8 +55,8 @@ class CodeAnalyzer(object):
 
             for node in self.module_node.body:
                 if isinstance(node, ast.FunctionDef) and node.name == function_name:
-                    generator, return_type = self.analysis_function(node, arg_types)
-                    self.functions.append(Function(function_name, arg_types, return_type, generator))
+                    generator, return_type = self.analysis_function(node, args_type)
+                    self.functions.append(Function(function_name, args_type, return_type, generator))
                     return return_type
 
             # when function is not exist: string
@@ -87,9 +87,11 @@ class CodeAnalyzer(object):
 
         elif isinstance(node, ast.Str):
             return Type.STRING
+        elif isinstance(node, ast.List):
+            return Type.LIST
         elif isinstance(node, ast.Call):
-            arg_types = [self.get_type(arg) for arg in node.args]
-            return self.get_function_return_type(node.func.id, arg_types)
+            args_type = [self.get_type(arg) for arg in node.args]
+            return self.get_function_return_type(node.func.id, args_type)
         elif isinstance(node, ast.Name):
             return self.variables[node.id].var_type
 

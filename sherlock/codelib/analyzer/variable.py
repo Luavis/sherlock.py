@@ -6,9 +6,10 @@ class Type(object):
     _VOID = 0
     _NUMBER = 1
     _STRING = 2
+    _LIST = 3
     VOID = None
     NUMBER = None
-    STRING = None
+    LIST = None
 
     def __init__(self, value):
         self.value = value
@@ -25,6 +26,10 @@ class Type(object):
     def is_void(self):
         return self.value == Type._VOID
 
+    @property
+    def is_list(self):
+        return self.value == Type._LIST
+
     def __repr__(self):
         if self.is_void:
             return 'Void'
@@ -32,11 +37,14 @@ class Type(object):
             return 'Number'
         elif self.is_string:
             return 'String'
+        elif self.is_list:
+            return 'List'
         else:
             return 'Unknown'
 
 Type.NUMBER = Type(Type._NUMBER)
 Type.STRING = Type(Type._STRING)
+Type.LIST = Type(Type._LIST)
 Type.VOID = Type(Type._VOID)
 
 class Variable(object):

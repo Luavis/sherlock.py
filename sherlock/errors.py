@@ -10,3 +10,7 @@ class SyntaxNotSupportError(Exception):
 
 class ParamTypeMismatchError(Exception):
     pass
+
+class FunctionIsNotAnalyzedError(Exception):
+    def __init__(self, function_name):
+        Exception.__init__(self, '%s is not analyzed', function_name)
