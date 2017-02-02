@@ -8,3 +8,4 @@ def str_ast_node(node):
         return rv + ')'
     else:
         return repr(node)
+

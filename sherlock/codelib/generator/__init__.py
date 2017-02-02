@@ -5,6 +5,7 @@ from sherlock.codelib.analyzer.variable import Variables, Type
 from sherlock.codelib.analyzer.function import Functions
 from sherlock.codelib.generator.temp_variable import TempVariableManager
 from sherlock.codelib.generator.binop import generate_binop
+from sherlock.codelib.generator.compare_op import generate_compare_op
 
 CONTEXT_STATUS_GLOBAL = 1
 CONTEXT_STATUS_FUNCTION = 2
@@ -103,6 +104,18 @@ class CodeGenerator(object):
                         "Multiple dimension array is not support in shellscript language."
                     )
             return '(%s)' % ' '.join([self._generate(x, ext_info) for x in node.elts])
+        elif isinstance(node, ast.If):
+            from sherlock.codelib import str_ast_node
+            test = self._generate(node.test, ext_info)
+            self.code_buffer.append('if [ %s ]; then' % test)
+            for x in node.body:
+                print(x)
+                self.code_buffer.append(self._generate(x))
+            return 'fi'
+        elif isinstance(node, ast.Compare):
+            return generate_compare_op(self, node, ext_info)
+        elif isinstance(node, ast.Pass):
+            return ''
         else:
             raise SyntaxNotSupportError("%s is not support yet." % node.__class__.__name__)
 
@@ -180,3 +193,4 @@ class CodeGenerator(object):
             return self.functions[node.func.id].return_type
         else:
             return Type.VOID
+

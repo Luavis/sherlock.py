@@ -54,3 +54,4 @@ def generate_binop(generator, node, ext_info):
         return left + right, _ext_info['extra_code']
     else:
         raise SyntaxNotSupportError("%s operation is not support yet." % node.op.__class__.__name__)
+
