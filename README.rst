@@ -74,7 +74,7 @@ Using ``-o`` flag, you can save sherlock result in file. In this case script isn
 
 Using ``-c`` flag, input command is immediately translated to shell script language and executed.
 
-If you want to details. Please check `sample codes <https://github.com/Luavis/sherlock.py/tree/master/samples>`__ 
+If you want to details. Please check `sample codes <https://github.com/Luavis/sherlock.py/tree/master/samples>`__
 
 Todo
 ----
@@ -83,6 +83,7 @@ Todo
 * import syntax
 * ``command`` package
 * documentation
+* support windows batch and powershell script
 * more test...
 
 License

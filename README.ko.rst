@@ -87,6 +87,7 @@ Todo
 * import 구문
 * ``command`` 패키지 구현
 * 문서화
+* Windows BATCH/Powershell 스크립트 지원
 * 더 많은 테스트
 
 License
