@@ -1,14 +1,13 @@
 import ast
 import types
+from sherlock.codelib.generator.dispatcher import CONTEXT_STATUS_GLOBAL, CONTEXT_STATUS_FUNCTION
 from sherlock.errors import CompileError, SyntaxNotSupportError, FunctionIsNotAnalyzedError
 from sherlock.codelib.analyzer.variable import Variables, Type
 from sherlock.codelib.analyzer.function import Functions
 from sherlock.codelib.generator.temp_variable import TempVariableManager
 from sherlock.codelib.generator.binop import generate_binop
-from sherlock.codelib.generator.compare_op import generate_compare_op
-
-CONTEXT_STATUS_GLOBAL = 1
-CONTEXT_STATUS_FUNCTION = 2
+from sherlock.codelib.generator.system_function import is_system_function
+from sherlock.codelib.generator.dispatcher import generator_dipatcher
 
 
 class CodeGenerator(object):
@@ -62,62 +61,7 @@ class CodeGenerator(object):
             raise CompileError("code section must be function or module node")
 
     def _generate(self, node, ext_info={}):
-
-        if isinstance(node, ast.Assign):
-            return self.generate_assign(node)
-        elif isinstance(node, ast.Name):
-            return self.generate_name(node, ext_info.get('is_arg', False))
-        elif isinstance(node, ast.Expr):
-            return self.generate_expr(node)
-        elif isinstance(node, ast.Call):
-            # self.code_buffer += '__return_%s' % node.func.id
-            return self.generate_call(node)
-        elif isinstance(node, ast.Num):
-            return str(node.n)
-        elif isinstance(node, ast.BinOp):
-            if ext_info.get('extra_code') is None:
-                ext_info['extra_code'] = ''
-
-            ret, ext_info['extra_code'] = generate_binop(self, node, ext_info)
-            return ret
-        elif isinstance(node, ast.Str):
-            return '"' + node.s.replace('"','\\"') + '"'
-        elif isinstance(node, ast.FunctionDef):
-            function_info = self.functions[node.name]
-            if function_info is None:
-                raise FunctionIsNotAnalyzedError(node.name)
-            else:
-                generator = CodeGenerator(
-                    node=node,
-                    context_status=CONTEXT_STATUS_FUNCTION,
-                    function_info=function_info,
-                )
-                return generator.generate()
-        elif hasattr(ast, 'arg') and isinstance(node, ast.arg):
-            return 'local ' + node.arg
-        elif isinstance(node, ast.Return):
-            return 'export __return_%s=%s' % (ext_info['func_name'], self._generate(node.value))
-        elif isinstance(node, ast.List):
-            for x in node.elts:
-                if isinstance(x, ast.List):
-                    raise SyntaxNotSupportError(
-                        "Multiple dimension array is not support in shellscript language."
-                    )
-            return '(%s)' % ' '.join([self._generate(x, ext_info) for x in node.elts])
-        elif isinstance(node, ast.If):
-            from sherlock.codelib import str_ast_node
-            test = self._generate(node.test, ext_info)
-            self.code_buffer.append('if [ %s ]; then' % test)
-            for x in node.body:
-                print(x)
-                self.code_buffer.append(self._generate(x))
-            return 'fi'
-        elif isinstance(node, ast.Compare):
-            return generate_compare_op(self, node, ext_info)
-        elif isinstance(node, ast.Pass):
-            return ''
-        else:
-            raise SyntaxNotSupportError("%s is not support yet." % node.__class__.__name__)
+        return generator_dipatcher(self, node, ext_info)
 
     def generate_assign(self, node):
         target_code = ''
@@ -159,10 +103,12 @@ class CodeGenerator(object):
                 raise SyntaxNotSupportError('Keyword arguments is not support yet.')
         elif not len(node.keywords) == 0:
             raise SyntaxNotSupportError('Keyword arguments is not support yet.')
-        funciton_name = node.func.id
+        function_name = node.func.id
         if len(node.args) is 0:
-            return '%s' % funciton_name
+            return '%s' % function_name
         argument_list = []
+        if is_system_function(function_name):
+            return generate_system_function(generator, )
         for x in node.args:
             if isinstance(x, ast.Call):
                 new_temp_variable = self.temp_variable.get_new_name()
@@ -172,7 +118,7 @@ class CodeGenerator(object):
             else:
                 argument_list.append(self._generate(x, ext_info={'is_arg': True}))
         arguments_code = ' '.join(argument_list)
-        return '%s %s' % (funciton_name, arguments_code)
+        return '%s %s' % (function_name, arguments_code)
 
     def get_type(self, node):
         if isinstance(node, ast.Num):
