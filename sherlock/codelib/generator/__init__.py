@@ -6,7 +6,7 @@ from sherlock.codelib.analyzer.variable import Variables, Type
 from sherlock.codelib.analyzer.function import Functions
 from sherlock.codelib.generator.temp_variable import TempVariableManager
 from sherlock.codelib.generator.binop import generate_binop
-from sherlock.codelib.generator.system_function import is_system_function
+from sherlock.codelib.generator.system_function import is_system_function, generate_system_function
 from sherlock.codelib.generator.dispatcher import generator_dipatcher
 
 
@@ -97,7 +97,7 @@ class CodeGenerator(object):
         else:
             return self._generate(node.value)
 
-    def generate_call(self, node):
+    def generate_call(self, node, ext_info={}):
         if hasattr(node, 'kwargs'):
             if not node.kwargs is None:
                 raise SyntaxNotSupportError('Keyword arguments is not support yet.')
@@ -108,7 +108,7 @@ class CodeGenerator(object):
             return '%s' % function_name
         argument_list = []
         if is_system_function(function_name):
-            return generate_system_function(generator, )
+            return generate_system_function(self, node, ext_info)
         for x in node.args:
             if isinstance(x, ast.Call):
                 new_temp_variable = self.temp_variable.get_new_name()
@@ -116,7 +116,8 @@ class CodeGenerator(object):
                 self.code_buffer.append('%s=$__return_%s' % (new_temp_variable, x.func.id))
                 argument_list.append(new_temp_variable)
             else:
-                argument_list.append(self._generate(x, ext_info={'is_arg': True}))
+                ext_info['is_arg'] = True
+                argument_list.append(self._generate(x, ext_info=ext_info))
         arguments_code = ' '.join(argument_list)
         return '%s %s' % (function_name, arguments_code)
 
@@ -139,4 +140,3 @@ class CodeGenerator(object):
             return self.functions[node.func.id].return_type
         else:
             return Type.VOID
-

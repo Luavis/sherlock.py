@@ -14,7 +14,7 @@ def generator_dipatcher(generator, node, ext_info={}):
     elif isinstance(node, ast.Expr):
         return generator.generate_expr(node)
     elif isinstance(node, ast.Call):
-        return generator.generate_call(node)
+        return generator.generate_call(node, ext_info)
     elif isinstance(node, ast.Num):
         return str(node.n)
     elif isinstance(node, ast.BinOp):
@@ -59,8 +59,12 @@ def generator_dipatcher(generator, node, ext_info={}):
     elif isinstance(node, ast.For):
         from sherlock.codelib import str_ast_node
         print(str_ast_node(node))
-        code = 'for %s in '
-        return 'for '
+        iterator = generator_dipatcher(generator, node.iter, ext_info)
+
+        generator.code_buffer.append('for %s in %s\ndo' % (node.target.id, iterator))
+        for x in node.body:
+            generator.code_buffer.append(generator._generate(x))
+        return 'done'
     elif isinstance(node, ast.Pass):
         return ''
     else:
