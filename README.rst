@@ -60,8 +60,7 @@ Following is basic usage.
 
     $ sherlock target.py
 
-Using this command, target.py file is translated into shell sciprt. after, it is automatically run
-using``sh``. We can find out bug from the running result.
+Using this command, target.py file is translated into shell sciprt. after, it is automatically run with ``sh``. We can find out bug from the running result.
 
 .. code:: sh
 
@@ -75,7 +74,17 @@ Using ``-o`` flag, you can save sherlock result in file. In this case script isn
 
 Using ``-c`` flag, input command is immediately translated to shell script language and executed.
 
-If you want to details. Please check `sample codes <https://github.com/Luavis/sherlock.py/tree/master/samples>`__ 
+If you want to details. Please check `sample codes <https://github.com/Luavis/sherlock.py/tree/master/samples>`__
+
+Todo
+----
+
+* if-for statement
+* import syntax
+* ``command`` package
+* documentation
+* support windows batch and powershell script
+* more test...
 
 License
 -------

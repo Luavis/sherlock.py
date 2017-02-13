@@ -80,6 +80,16 @@ Usage
 
 자세한 사용예는 `samples <https://github.com/Luavis/sherlock.py/tree/master/samples>`__ 에서 확인해주세요
 
+Todo
+----
+
+* if-for 문
+* import 구문
+* ``command`` 패키지 구현
+* 문서화
+* Windows BATCH/Powershell 스크립트 지원
+* 더 많은 테스트
+
 License
 -------
 
