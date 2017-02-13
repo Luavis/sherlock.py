@@ -1,6 +1,3 @@
-Sherlock.py
-========
-
 |wip| |pypi| |pypi-version| |travis-ci| |Code Climate| |Test Coverage| |Open Source Love|
 
 .. image:: http://i.imgur.com/n8xH4Wd.png?1
@@ -8,7 +5,7 @@ Sherlock.py
    :align: center
    :alt: sherlock.py
 
-sherlock.py은 Python으로 작성한 코드를 shell script언어로 바꿔주는 transpiler입니다.
+**Sherlock.py**은 Python으로 작성한 코드를 shell script언어로 바꿔주는 transpiler입니다.
 
 `English <https://github.com/Luavis/sherlock/tree/master/README.rst>`_
 
@@ -34,7 +31,7 @@ Install
 
     $ pip install sherlock.py
 
-sherlock.py은 python버전 2.6 이상, 3.3 이상에서 동작을 보장하고 Linux 계열
+Sherlock.py는 python버전 2.6 이상, 3.3 이상에서 동작을 보장하고 Linux 계열
 운영체제와 macOS에서 동작을 보장합니다. 해당 버전과 운영체제에 대해서 문제가 있으면 issue를 남겨주세요.
 
 Usage
