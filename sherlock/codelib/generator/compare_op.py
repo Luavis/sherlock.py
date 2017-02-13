@@ -1,5 +1,6 @@
 import ast
 from sherlock.errors import SyntaxNotSupportError
+from sherlock.codelib.generator.dispatcher import add_generator
 
 
 number_compare_op_table = {
@@ -20,12 +21,14 @@ string_compare_op_table = {
     ast.IsNot: '!',
 }
 
-def generate_compare_op(generator, node, ext_info):
-    left = generator._generate(node.left, ext_info)
-    right = generator._generate(node.comparators[0], ext_info)
+
+@add_generator('Compare')
+def generate_compare_op(self, node, ext_info):
+    left = self.dispatch(node.left, ext_info)
+    right = self.dispatch(node.comparators[0], ext_info)
     op_node = node.ops[0]
-    left_type = generator.get_type(node.left)
-    right_type = generator.get_type(node.comparators[0])
+    left_type = self.get_type(node.left)
+    right_type = self.get_type(node.comparators[0])
 
     op_code = None
 

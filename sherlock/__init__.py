@@ -12,7 +12,7 @@ __author__ = "Luavis Kang"
 __copyright__ = "Copyright 2017, Luavis"
 __credits__ = ["Luavis Kang", ]
 __license__ = "MIT"
-__version__ = "0.1.2"
+__version__ = "0.2.0"
 __status__ = "Development"
 
 __maintainer__ = "Luavis Kang"
@@ -24,7 +24,7 @@ parser.add_argument('input', metavar='[file | command]', type=str, help='program
 parser.add_argument('-o', dest='output', metavar='output', type=str, help='output file path')
 parser.add_argument('-c', '--command', dest='is_command', action='store_true', default=False, help='program passed in as string')
 parser.add_argument('-v', '--verbose', dest='is_verbose', action='store_true', default=False, help='program run in verbose mode')
-parser.add_argument('--version', action='version', version='Sherlock 0.1.0')
+parser.add_argument('--version', action='version', version='Sherlock %s' % __version__)
 
 
 def print_error(msg):

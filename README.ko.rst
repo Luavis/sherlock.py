@@ -83,7 +83,6 @@ Usage
 Todo
 ----
 
-* if-for 문
 * import 구문
 * ``command`` 패키지 구현
 * 문서화

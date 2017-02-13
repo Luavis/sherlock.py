@@ -1,20 +1,26 @@
-def generate_if(generator, node, ext_info):
-    test = generator._generate(node.test, ext_info)
-    generator.code_buffer.append('if [ %s ]; then' % test)
+from sherlock.codelib.generator.dispatcher import add_generator
+
+
+@add_generator('If')
+def generate_if(self, node, ext_info):
+    test = self.dispatch(node.test, ext_info)
+    self.code_buffer.append('if [ %s ]; then' % test)
     for x in node.body:
-        generator.code_buffer.append(generator._generate(x))
+        self.code_buffer.append(self.dispatch(x))
     return 'fi'
 
-def generate_while(generator, node, ext_info):
-    test = generator._generate(node.test, ext_info)
-    generator.code_buffer.append('while [ %s ]; do' % test)
+@add_generator('While')
+def generate_while(self, node, ext_info):
+    test = self.dispatch(node.test, ext_info)
+    self.code_buffer.append('while [ %s ]; do' % test)
     for x in node.body:
-        generator.code_buffer.append(generator._generate(x))
+        self.code_buffer.append(self.dispatch(x))
     return 'done'
 
-def generate_for(generator, node, ext_info):
-    iterator = generator._generate(node.iter, ext_info)
-    generator.code_buffer.append('for %s in %s\ndo' % (node.target.id, iterator))
+@add_generator('For')
+def generate_for(self, node, ext_info):
+    iterator = self.dispatch(node.iter, ext_info)
+    self.code_buffer.append('for %s in %s\ndo' % (node.target.id, iterator))
     for x in node.body:
-        generator.code_buffer.append(generator._generate(x))
+        self.code_buffer.append(self.dispatch(x))
     return 'done'

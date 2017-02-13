@@ -1,9 +1,13 @@
 from sherlock.errors import CompileError
+from sherlock.codelib.generator.dispatcher import add_generator
+
 SYSTEM_FUNCTION_TABLE = {}
+
 
 def is_system_function(name):
     return name in SYSTEM_FUNCTION_TABLE.keys()
 
+@add_generator()
 def generate_system_function(generator, node, ext_info):
     function_generator = SYSTEM_FUNCTION_TABLE.get(node.func.id)
     if function_generator is None:

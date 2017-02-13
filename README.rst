@@ -79,7 +79,6 @@ If you want to details. Please check `sample codes <https://github.com/Luavis/sh
 Todo
 ----
 
-* if-for statement
 * import syntax
 * ``command`` package
 * documentation
