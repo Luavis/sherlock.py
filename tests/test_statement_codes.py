@@ -19,7 +19,7 @@ def test_simple_for_statement():
         'for i in range(1, 5):',
         '   pass'
     ]
-    assert analysis_code_list(code) == """for i in 1 2 3 4 5 6
+    assert analysis_code_list(code) == """for i in $(seq 1 $(( 5 - 1 )))
 do
 
 done
