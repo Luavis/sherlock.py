@@ -60,9 +60,6 @@ class CodeGenerator(object):
         else:
             raise CompileError("code section must be function or module node")
 
-    def _generate(self, node, ext_info={}):
-        return generator_dipatcher(self, node, ext_info)
-
     def generate_num(self, node, ext_info):
         return str(node.n)
 
@@ -220,3 +217,6 @@ class CodeGenerator(object):
             return self.functions[node.func.id].return_type
         else:
             return Type.VOID
+
+from types import MethodType
+CodeGenerator._generate = generator_dipatcher
