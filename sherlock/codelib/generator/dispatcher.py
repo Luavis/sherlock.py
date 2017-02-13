@@ -2,6 +2,7 @@ import ast
 from sherlock.codelib.generator.binop import generate_binop
 from sherlock.errors import CompileError, SyntaxNotSupportError, FunctionIsNotAnalyzedError
 from sherlock.codelib.generator.compare_op import generate_compare_op
+from sherlock.codelib.generator.statement import generate_if, generate_while, generate_for
 
 CONTEXT_STATUS_GLOBAL = 1
 CONTEXT_STATUS_FUNCTION = 2
@@ -36,25 +37,13 @@ def generator_dipatcher(generator, node, ext_info={}):
     elif isinstance(node, ast.List):
         return generator.generate_list(node, ext_info)
     elif isinstance(node, ast.If):
-        test = generator._generate(node.test, ext_info)
-        generator.code_buffer.append('if [ %s ]; then' % test)
-        for x in node.body:
-            generator.code_buffer.append(generator._generate(x))
-        return 'fi'
+        return generate_if(generator, node, ext_info)
     elif isinstance(node, ast.While):
-        test = generator._generate(node.test, ext_info)
-        generator.code_buffer.append('while [ %s ]; do' % test)
-        for x in node.body:
-            generator.code_buffer.append(generator._generate(x))
-        return 'done'
+        return generate_while(generator, node, ext_info)
+    elif isinstance(node, ast.For):
+        return generate_for(generator, node, ext_info)
     elif isinstance(node, ast.Compare):
         return generate_compare_op(generator, node, ext_info)
-    elif isinstance(node, ast.For):
-        iterator = generator_dipatcher(generator, node.iter, ext_info)
-        generator.code_buffer.append('for %s in %s\ndo' % (node.target.id, iterator))
-        for x in node.body:
-            generator.code_buffer.append(generator._generate(x))
-        return 'done'
     elif isinstance(node, ast.Pass):
         return ''
     else:
