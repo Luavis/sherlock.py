@@ -9,31 +9,27 @@ CONTEXT_STATUS_FUNCTION = 2
 
 def generator_dipatcher(generator, node, ext_info={}):
     if isinstance(node, ast.Assign):
-        return generator.generate_assign(node)
+        return generator.generate_assign(node, ext_info)
     elif isinstance(node, ast.AugAssign):
         return generator.generate_aug_assign(node, ext_info)
     elif isinstance(node, ast.Name):
-        return generator.generate_name(node, ext_info.get('is_arg', False))
+        return generator.generate_name(node, ext_info)
     elif isinstance(node, ast.Expr):
-        return generator.generate_expr(node)
+        return generator.generate_expr(node, ext_info)
     elif isinstance(node, ast.Call):
         return generator.generate_call(node, ext_info)
     elif isinstance(node, ast.Num):
-        return str(node.n)
+        return generator.generate_num(node, ext_info)
     elif isinstance(node, ast.BinOp):
-        if ext_info.get('extra_code') is None:
-            ext_info['extra_code'] = ''
-
-        ret, ext_info['extra_code'] = generate_binop(generator, node, ext_info)
-        return ret
+        return generator.generate_binop(node, ext_info)
     elif isinstance(node, ast.Str):
-        return '"' + node.s.replace('"','\\"') + '"'
+        return generator.generate_str(node, ext_info)
     elif isinstance(node, ast.FunctionDef):
         return generator.generate_functiondef(node, ext_info)
     elif hasattr(ast, 'arg') and isinstance(node, ast.arg):
-        return 'local ' + node.arg
+        return generator.generate_arg(node, ext_info)
     elif isinstance(node, ast.Return):
-        return 'export __return_%s=%s' % (ext_info['func_name'], generator._generate(node.value))
+        return generator.generate_return(node, ext_info)
     elif isinstance(node, ast.List):
         return generator.generate_list(node, ext_info)
     elif isinstance(node, ast.If):
@@ -45,6 +41,8 @@ def generator_dipatcher(generator, node, ext_info={}):
     elif isinstance(node, ast.Compare):
         return generate_compare_op(generator, node, ext_info)
     elif isinstance(node, ast.Pass):
-        return ''
+        return generator.generate_pass(node, ext_info)
+    elif isinstance(node, ast.Print):
+        return generator.generate_print(node, ext_info)
     else:
         raise SyntaxNotSupportError("%s is not support yet." % node.__class__.__name__)

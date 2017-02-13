@@ -63,7 +63,10 @@ class CodeGenerator(object):
     def _generate(self, node, ext_info={}):
         return generator_dipatcher(self, node, ext_info)
 
-    def generate_assign(self, node):
+    def generate_num(self, node, ext_info):
+        return str(node.n)
+
+    def generate_assign(self, node, ext_info):
         target_code = ''
         if isinstance(node.targets[0], ast.Name):
             target_code = self._generate(node.targets[0])
@@ -115,7 +118,30 @@ class CodeGenerator(object):
                     % node.op.__class__.__name__
                 )
 
-    def generate_name(self, node, is_arg=False):
+    def generate_return(self, node, ext_info):
+        return 'export __return_%s=%s' % (ext_info['func_name'], self._generate(node.value))
+
+    def generate_pass(self, node, ext_info):
+        return ''
+
+    def generate_print(self, node, ext_info):
+        return 'echo %s' % ' '.join([self._generate(value) for value in node.values])
+
+    def generate_arg(self, node, ext_info):
+        return 'local ' + node.arg
+
+    def generate_str(self, node, ext_info):
+        return '"' + node.s.replace('"','\\"') + '"'
+
+    def generate_binop(self, node, ext_info):
+        if ext_info.get('extra_code') is None:
+            ext_info['extra_code'] = ''
+
+        ret, ext_info['extra_code'] = generate_binop(self, node, ext_info)
+        return ret
+
+    def generate_name(self, node, ext_info={'is_arg': False}):
+        is_arg = ext_info.get('is_arg', False)
         if isinstance(node.ctx, ast.Store) or isinstance(node.ctx, ast.Param):
             return 'export ' + node.id if self.is_global else 'local ' + node.id
         else:
@@ -124,7 +150,7 @@ class CodeGenerator(object):
             else:
                 return '$' + node.id
 
-    def generate_expr(self, node):
+    def generate_expr(self, node, ext_info):
         if isinstance(node.value, ast.Str):
             # remove line comment
             return ''

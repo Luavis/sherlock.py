@@ -49,3 +49,11 @@ def test_run_command_line_command():
         'git("commit", "-m", "Hello")',
     ]
     assert analysis_code_list(code) == 'git "commit" "-m" "Hello"\n'
+
+
+def test_print():
+    code = [
+        'print("Hello World")',
+    ]
+
+    analysis_code_list(code) == 'echo "Hello World"\n'
