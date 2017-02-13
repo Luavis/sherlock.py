@@ -5,7 +5,7 @@ from sherlock.errors import CompileError, SyntaxNotSupportError, FunctionIsNotAn
 from sherlock.codelib.analyzer.variable import Variables, Type
 from sherlock.codelib.analyzer.function import Functions
 from sherlock.codelib.generator.temp_variable import TempVariableManager
-from sherlock.codelib.generator.binop import generate_binop
+from sherlock.codelib.generator.binop import generate_binop, generate_numeric_op
 from sherlock.codelib.generator.system_function import is_system_function, generate_system_function
 from sherlock.codelib.generator.dispatcher import generator_dipatcher
 
@@ -71,7 +71,11 @@ class CodeGenerator(object):
             raise CompileError()
 
         if isinstance(node.value, ast.Call):
-            return '%s\n%s=$__return_%s' % (self._generate(node.value), target_code, node.value.func.id)
+            return '%s\n%s=$__return_%s' % (
+                self._generate(node.value),
+                target_code,
+                node.value.func.id
+            )
         else:
             ext_info = {}
             value_code = self._generate(node.value, ext_info)
@@ -80,6 +84,36 @@ class CodeGenerator(object):
                 raise CompileError()
 
             return extra_code + target_code + '=' + value_code
+
+    def generate_aug_assign(self, node, ext_info):
+        tmp_name = self.temp_variable.get_new_name()
+        tmp_assign_code = '%s=%s' % (
+            tmp_name,
+            self._generate(node.value)
+        )
+        self.code_buffer.append(tmp_assign_code)
+        target = self._generate(node.target)
+        target_type = self.get_type(node.target)
+        if target_type.is_number:
+            op = generate_numeric_op(self, node.op, ext_info)
+            return '%s=$(( $%s %s $%s ))'% (
+                target,
+                target,
+                op,
+                tmp_name
+            )
+        elif target_type.is_string:
+            if isinstance(node.op, ast.Add):
+                return '%s=%s$%s'% (
+                    target,
+                    target,
+                    tmp_name
+                )
+            else:
+                raise SyntaxNotSupportError(
+                    "%s operation is not support yet."
+                    % node.op.__class__.__name__
+                )
 
     def generate_name(self, node, is_arg=False):
         if isinstance(node.ctx, ast.Store) or isinstance(node.ctx, ast.Param):
@@ -120,6 +154,26 @@ class CodeGenerator(object):
                 argument_list.append(self._generate(x, ext_info=ext_info))
         arguments_code = ' '.join(argument_list)
         return '%s %s' % (function_name, arguments_code)
+
+    def generate_functiondef(self, node, ext_info):
+        function_info = self.functions[node.name]
+        if function_info is None:
+            raise FunctionIsNotAnalyzedError(node.name)
+        else:
+            generator = CodeGenerator(
+                node=node,
+                context_status=CONTEXT_STATUS_FUNCTION,
+                function_info=function_info,
+            )
+            return generator.generate()
+
+    def generate_list(self, node, ext_info):
+        for x in node.elts:
+            if isinstance(x, ast.List):
+                raise SyntaxNotSupportError(
+                    "Multiple dimension array is not support in shellscript language."
+                )
+        return '(%s)' % ' '.join([self._generate(x, ext_info) for x in node.elts])
 
     def get_type(self, node):
         if isinstance(node, ast.Num):

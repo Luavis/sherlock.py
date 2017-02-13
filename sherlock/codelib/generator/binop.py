@@ -21,6 +21,18 @@ def get_node_name_with_extra_code(generator, node, extra_code):
 
     return left_name, extra_code
 
+def generate_numeric_op(generator, node, ext_info):
+    if isinstance(node, ast.Add):
+        return '+'
+    elif isinstance(node, ast.Sub):
+        return '-'
+    elif isinstance(node, ast.Mult):
+        return '*'
+    elif isinstance(node, ast.Div):
+        return '/'
+    else:
+        return ''
+
 def generate_binop(generator, node, ext_info):
     left_type = generator.get_type(node.left)
     right_type = generator.get_type(node.right)
@@ -30,16 +42,8 @@ def generate_binop(generator, node, ext_info):
         raise CompileError('Void type is not able to operate.')
 
     if left_type.is_number and right_type.is_number:
-        op = ''
-        if isinstance(node.op, ast.Add):
-            op = '+'
-        elif isinstance(node.op, ast.Sub):
-            op = '-'
-        elif isinstance(node.op, ast.Mult):
-            op = '*'
-        elif isinstance(node.op, ast.Div):
-            op = '/'
-        else:
+        op = generate_numeric_op(generator, node.op, ext_info)
+        if len(op) is 0:
             raise SyntaxNotSupportError("%s operation is not support yet." % node.op.__class__.__name__)
 
         left_name, extra_code = get_node_name_with_extra_code(generator, node.left, extra_code)
