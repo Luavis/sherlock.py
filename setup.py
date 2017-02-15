@@ -16,10 +16,12 @@ def install():
         author=sherlock.__author__,
         author_email=sherlock.__email__,
         license='MIT',
+        platforms=['POSIX'],
         url='https://github.com/Luavis/sherlock',
         classifiers=[
-            'Development Status :: 1 - Planning',
+            'Development Status :: 2 - Pre-Alpha',
             'License :: OSI Approved :: MIT License',
+            'Environment :: Console',
             'Operating System :: POSIX',
             'Operating System :: MacOS :: MacOS X',
             'Topic :: Software Development :: Compilers',

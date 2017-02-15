@@ -1,6 +1,3 @@
-Sherlock.py
-========
-
 |wip| |pypi| |pypi-version| |travis-ci| |Code Climate| |Test Coverage| |Open Source Love|
 
 .. image:: http://i.imgur.com/n8xH4Wd.png?1
@@ -8,7 +5,7 @@ Sherlock.py
    :align: center
    :alt: sherlock.py
 
-Sherlock.py is transpiler that translate python to shell script language.
+**Sherlock.py** is transpiler that translate python to shell script language.
 
 `한국어로 보기 <https://github.com/Luavis/sherlock/tree/master/README.ko.rst>`_
 
@@ -33,7 +30,7 @@ Install
 
     $ pip install sherlock.py
 
-Sherlock.py support python version over 2.6 or 3.3. and support linux and macOS. If there is error in install please write issue.
+Sherlock.py supports python version over 2.6 or 3.3. and support linux and macOS. If there is error in install please write issue.
 
 Usage
 -----
@@ -79,7 +76,6 @@ If you want to details. Please check `sample codes <https://github.com/Luavis/sh
 Todo
 ----
 
-* if-for statement
 * import syntax
 * ``command`` package
 * documentation

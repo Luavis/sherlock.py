@@ -30,6 +30,9 @@ class Type(object):
     def is_list(self):
         return self.value == Type._LIST
 
+    def __eq__(self, other):
+        return self.value == other.value
+
     def __repr__(self):
         if self.is_void:
             return 'Void'
