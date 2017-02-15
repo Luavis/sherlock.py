@@ -1,20 +1,43 @@
 from sherlock.errors import CompileError
 from sherlock.codelib.generator.dispatcher import add_generator
 
-SYSTEM_FUNCTION_TABLE = {}
+SYSTEM_FUNCTION_TABLE = []
 
+
+class SystemFunction(object):
+    @staticmethod
+    def get_function(name, default=None):
+        for x in SYSTEM_FUNCTION_TABLE:
+            if x.name is name:
+                return x
+        return default
+
+    @staticmethod
+    def register(name, return_type, func):
+        SYSTEM_FUNCTION_TABLE.append(SystemFunction(name, return_type, func))
+
+    def __init__(self, name, return_type, func):
+        self.name = name
+        self.return_type = return_type
+        self.func = func
+
+    def __call__(self, *args, **kwargs):
+        return self.func(*args, **kwargs)
 
 def is_system_function(name):
-    return name in SYSTEM_FUNCTION_TABLE.keys()
+    return SystemFunction.get_function(name) is not None
+
+def get_system_function(name):
+    return SystemFunction.get_function(name)
 
 @add_generator()
 def generate_system_function(generator, node, ext_info):
-    function_generator = SYSTEM_FUNCTION_TABLE.get(node.func.id)
+    function_generator = SystemFunction.get_function(node.func.id)
     if function_generator is None:
         raise CompileError('Function %s is not implemented.' % node.func.id)
     return function_generator(generator, node)
 
-def system_function(name, *arg_types):
+def system_function(name, return_type, *arg_types):
     def decorator(func):
         global SYSTEM_FUNCTION_TABLE
         def wrapper(generator, node):
@@ -40,8 +63,8 @@ def system_function(name, *arg_types):
                         % (func.__name__, i, arg_types[i])
                     )
             return func(*func_args)
-        SYSTEM_FUNCTION_TABLE[name] = wrapper
+        SystemFunction.register(name, return_type, wrapper)
         return wrapper
     return decorator
 
-__import__('sherlock.codelib.generator.system_function.implements')
+__import__('sherlock.codelib.system_function.implements')

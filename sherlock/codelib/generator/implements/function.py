@@ -1,6 +1,6 @@
 import ast
 from sherlock.errors import SyntaxNotSupportError, FunctionIsNotAnalyzedError
-from sherlock.codelib.generator.system_function import is_system_function
+from sherlock.codelib.system_function import is_system_function
 from sherlock.codelib.generator.dispatcher import add_generator
 
 

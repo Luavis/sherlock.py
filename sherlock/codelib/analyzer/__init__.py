@@ -1,8 +1,10 @@
 import ast
-from sherlock.errors import CompileError, SyntaxNotSupportError, ParamTypeMismatchError
 from sherlock.codelib.generator import CodeGenerator
-from sherlock.codelib.analyzer.variable import Type, Variable, Variables
+from sherlock.codelib.cmd import analyze_cmd
 from sherlock.codelib.analyzer.function import Function, Functions
+from sherlock.codelib.analyzer.variable import Type, Variable, Variables
+from sherlock.codelib.system_function import is_system_function, SystemFunction
+from sherlock.errors import CompileError, SyntaxNotSupportError, ParamTypeMismatchError
 
 
 class CodeAnalyzer(object):
@@ -21,6 +23,8 @@ class CodeAnalyzer(object):
             elif isinstance(node, ast.Expr):
                 if isinstance(node.value, ast.Call):
                     self.get_type(node.value)
+            elif isinstance(node, ast.ImportFrom):
+                analyze_cmd(node)
         generator = CodeGenerator(self.code, functions=self.functions, variables=self.variables)
         return generator
 
@@ -46,21 +50,20 @@ class CodeAnalyzer(object):
 
     def get_function_return_type(self, function_name, args_type=[]):
         function = self.functions[function_name]
+        if is_system_function(function_name):
+            return SystemFunction.get_function(function_name).return_type
         if function is not None:
             if function.is_args_type_match(args_type):
                 return function.return_type
             else:
                 raise ParamTypeMismatchError("Function '%s' parameter type is not match", function_name)
         else:
-
             for node in self.module_node.body:
                 if isinstance(node, ast.FunctionDef) and node.name == function_name:
                     generator, return_type = self.analysis_function(node, args_type)
                     self.functions.append(Function(function_name, args_type, return_type, generator))
                     return return_type
-
-            # when function is not exist: string
-            return Type.STRING
+            return Type.STRING  # when function is not exist: string
 
     def get_type(self, node):
         if isinstance(node, ast.BinOp):

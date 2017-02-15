@@ -7,31 +7,33 @@ class Type(object):
     _NUMBER = 1
     _STRING = 2
     _LIST = 3
+    _ANY = 4
     VOID = None
     NUMBER = None
     LIST = None
+    ANY = None
 
     def __init__(self, value):
         self.value = value
 
     @property
     def is_number(self):
-        return self.value == Type._NUMBER
+        return self.value in [Type._NUMBER, Type._ANY]
 
     @property
     def is_string(self):
-        return self.value == Type._STRING
+        return self.value in [Type._STRING, Type._ANY]
 
     @property
     def is_void(self):
-        return self.value == Type._VOID
+        return self.value in [Type._VOID, Type._ANY]
 
     @property
     def is_list(self):
-        return self.value == Type._LIST
+        return self.value in [Type._LIST, Type._ANY]
 
     def __eq__(self, other):
-        return self.value == other.value
+        return self.value in [other.value, Type._ANY]
 
     def __repr__(self):
         if self.is_void:
@@ -49,6 +51,7 @@ Type.NUMBER = Type(Type._NUMBER)
 Type.STRING = Type(Type._STRING)
 Type.LIST = Type(Type._LIST)
 Type.VOID = Type(Type._VOID)
+Type.Any = Type(Type._ANY)
 
 class Variable(object):
     def __init__(self, name, var_type):

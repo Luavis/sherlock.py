@@ -19,6 +19,8 @@ class CodeGenerator(object):
         'sherlock.codelib.generator.implements.assignment',
         'sherlock.codelib.generator.implements.function',
         'sherlock.codelib.generator.implements.importing',
+        'sherlock.codelib.system_function',
+        'sherlock.codelib.cmd',
     ]
 
     def __init__(
