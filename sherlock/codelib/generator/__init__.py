@@ -12,12 +12,13 @@ CONTEXT_STATUS_FUNCTION = 2
 class CodeGenerator(object):
 
     EXTENSIONS = [
-        'sherlock.codelib.generator.simple_generator',
-        'sherlock.codelib.generator.compare_op',
-        'sherlock.codelib.generator.statement',
-        'sherlock.codelib.generator.binop',
-        'sherlock.codelib.generator.assignment',
-        'sherlock.codelib.generator.function',
+        'sherlock.codelib.generator.implements.simple_generator',
+        'sherlock.codelib.generator.implements.compare_op',
+        'sherlock.codelib.generator.implements.statement',
+        'sherlock.codelib.generator.implements.binop',
+        'sherlock.codelib.generator.implements.assignment',
+        'sherlock.codelib.generator.implements.function',
+        'sherlock.codelib.generator.implements.importing',
     ]
 
     def __init__(
@@ -46,6 +47,9 @@ class CodeGenerator(object):
     def is_global(self):
         return self.context_status == CONTEXT_STATUS_GLOBAL
 
+    def append_code(self, code):
+        self.code_buffer.append(code)
+
     def dispatch(self, node, ext_info={}):
         from sherlock.codelib.generator.dispatcher import AST_NODE_DISPATCHER
         generator = AST_NODE_DISPATCHER.get(node.__class__)
@@ -58,7 +62,9 @@ class CodeGenerator(object):
             self.node = ast.parse(self.code)
         if isinstance(self.node, ast.Module):
             for x in self.node.body:
-                self.code_buffer.append(self.dispatch(x))
+                code_slice = self.dispatch(x)
+                if code_slice is not None:
+                    self.code_buffer.append(code_slice)
             return '\n'.join(self.code_buffer) + '\n'
         elif isinstance(self.node, ast.FunctionDef):
             if self.function_info is None:
