@@ -50,10 +50,14 @@ def test_run_command_line_command():
     ]
     assert analysis_code_list(code) == 'git "commit" "-m" "Hello"\n'
 
-
 def test_print():
     code = [
         'print("Hello World")',
     ]
+    assert analysis_code_list(code) == 'echo "Hello World"\n'
 
-    analysis_code_list(code) == 'echo "Hello World"\n'
+def test_range():
+    code = [
+        'range(1, 2)',
+    ]
+    assert analysis_code_list(code) == '$(seq 1 $(( 2 - 1 )))\n'

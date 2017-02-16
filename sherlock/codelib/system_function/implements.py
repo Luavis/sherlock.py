@@ -7,6 +7,10 @@ from sherlock.codelib.system_function import system_function
 def system_range(g, start, end):
     return '$(seq %s $(( %s - 1 )))' % (g.dispatch(start), g.dispatch(end))
 
+@system_function('print', Type.VOID, Type.ANY)
+def system_print(g, msg):
+    return 'echo %s' % g.dispatch(msg)
+
 @system_function('pipe', Type.VOID, Type.ANY, Type.ANY)
 def system_pipe(g, before, after):
     return '%s | %s' % (g.dispatch(before), g.dispatch(after))

@@ -15,7 +15,6 @@ function {prefix}{cmd_name}() {{
 
 def cmd_handler(name):
     def _handler(g, node):
-        print(node.args)
         g.append_code(
             '%s%s %s' % (
                 CMD_PREFIX,
