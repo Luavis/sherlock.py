@@ -12,7 +12,7 @@ __author__ = "Luavis Kang"
 __copyright__ = "Copyright 2017, Luavis"
 __credits__ = ["Luavis Kang", ]
 __license__ = "MIT"
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 __status__ = "Development"
 
 __maintainer__ = "Luavis Kang"
