@@ -3,30 +3,38 @@ from sherlock.errors import CompileError, SyntaxNotSupportError
 from sherlock.codelib.generator.dispatcher import add_generator
 
 
+NUMERIC_OP_TABLE = {
+    ast.Add: '+',
+    ast.Sub: '-',
+    ast.Mult: '*',
+    ast.Div: '/',
+}
+
 @add_generator('Num')
 def generate_num(self, node, ext_info):
     return str(node.n)
 
 @add_generator()
 def generate_numeric_op(self, node, ext_info):
-    if isinstance(node, ast.Add):
-        return '+'
-    elif isinstance(node, ast.Sub):
-        return '-'
-    elif isinstance(node, ast.Mult):
-        return '*'
-    elif isinstance(node, ast.Div):
-        return '/'
-    else:
-        return ''
+    op = NUMERIC_OP_TABLE.get(node.__class__)
+    if op is None:
+        SyntaxNotSupportError("%s is not support yet" % node.__class__.__name__)
+    return op
 
 @add_generator('Pass')
 def generate_pass(self, node, ext_info):
     return ''
 
+@add_generator('UnaryOp')
+def generate_unaryop(self, node, ext_info):
+    if isinstance(node.op, ast.Not):
+        return '! ' + self.dispatch(node.operand, ext_info)
+    else:
+        SyntaxNotSupportError("%s is not support yet" % node.op.__class__.__name__)
+
 @add_generator('Print')
 def generate_print(self, node, ext_info):
-    return 'echo %s' % ' '.join([self.dispatch(value) for value in node.values])
+    return 'echo %s' % ' '.join([self.dispatch(value, ext_info) for value in node.values])
 
 @add_generator('arg')
 def generate_arg(self, node, ext_info):
@@ -52,7 +60,7 @@ def generate_expr(self, node, ext_info):
     if isinstance(node.value, ast.Str):
         return ''  # remove line comment
     else:
-        return self.dispatch(node.value)
+        return self.dispatch(node.value, ext_info)
 
 @add_generator('List')
 def generate_list(self, node, ext_info):
