@@ -5,10 +5,9 @@
    :align: center
    :alt: sherlock.py
 
-**Sherlock.py**은 Python으로 작성한 코드를 shell script언어로 바꿔주는 transpiler입니다.
+**Sherlock.py**  Python으로 작성한 코드를 shell script언어로 바꿔주는 transpiler입니다.
 
 `English <https://github.com/Luavis/sherlock/tree/master/README.rst>`_
-
 
 .. contents::
 
