@@ -83,7 +83,6 @@ You can use general shell command importing from sherlock.cmd. When you import p
 .. code:: python
 
     from sherlock.cmd import ls
-
     ls('-al')
 
 **pipe function**
