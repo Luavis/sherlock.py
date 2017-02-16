@@ -73,6 +73,21 @@ Using ``-c`` flag, input command is immediately translated to shell script langu
 
 If you want to details. Please check `sample codes <https://github.com/Luavis/sherlock.py/tree/master/samples>`__
 
+Packages
+--------
+
+**sherlock.cmd**
+
+You can use general shell command importing from ``sherlock.cmd``. When you import package, it check user already installed command and create wrap function which return ``stdout`` output.
+
+For example..
+
+.. code:: python
+
+    from sherlock.cmd import ls
+    
+    ls('-al')
+
 Todo
 ----
 
