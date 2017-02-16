@@ -77,6 +77,28 @@ Usage
 
 자세한 사용예는 `samples <https://github.com/Luavis/sherlock.py/tree/master/samples>`__ 에서 확인해주세요
 
+Library
+-------
+
+**sherlock.cmd package**
+
+일반적인 쉘 명령어를 ``sherlock.cmd``를 import하여 쓸 수 있습니다. 이 패키지를 import하게 되면, Sherlock.py로 만들어진 쉘 스크립트 코드를 실행하는 유저의 환경에 해당 명령어가 설치되어 있는지 미리 확인합니다.
+
+.. code:: python
+
+    from sherlock.cmd import ls
+
+    ls('-al')
+
+**pipe function**
+
+쉘 스크립트에서는 ``|``를 통해서 명령어를 연결할 수 있습니다. 이를 Python code로 구현하기 위해서, Sherlock.py에서는 pipe 함수를 지원합니다.
+
+.. code:: python
+
+    from sherlock.cmd import wc
+    pipe(print('./test'), wc('-c'))
+
 Todo
 ----
 
