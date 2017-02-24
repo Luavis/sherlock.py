@@ -5,7 +5,7 @@
    :align: center
    :alt: sherlock.py
 
-**Sherlock.py** is transpiler that translate python to shell script language.
+**Sherlock.py** is transpiler that translate python to bash shell script language.
 
 `한국어로 보기 <https://github.com/Luavis/sherlock/tree/master/README.ko.rst>`_
 
@@ -21,7 +21,7 @@ Motivation
 
     < Ditective who program with Shell script >
 
-Shell script is well known script language which is used in most of unix-like OS. Shell script lanuage garuntee to run in most unix-like OS. So many software developers are using this language when they program install script or configuration script. Because this language is really old, There are several `problems <http://teaching.idallen.com/cst8207/16w/notes/740_script_problems.html>`_. and it is hard to maintain program which is writted by Shell script language.
+Shell script is well known script language which is used in most of unix-like OS. Shell script lanuage garuntee to run in most unix-like OS. So many software developers are using this language when they program install script or configuration script. Because this language is really old, There are several `problems <http://teaching.idallen.com/cst8207/16w/notes/740_script_problems.html>`_. and it is hard to maintain program which is writted by shell script language.
 
 Install
 -------
@@ -57,7 +57,7 @@ Following is basic usage.
 
     $ sherlock target.py
 
-Using this command, target.py file is translated into shell sciprt. after, it is automatically run with ``sh``. We can find out bug from the running result.
+Using this command, target.py file is translated into bash shell sciprt. after, it is automatically run with ``sh``. We can find out bug from the running result.
 
 .. code:: sh
 
@@ -69,7 +69,7 @@ Using ``-o`` flag, you can save sherlock result in file. In this case script isn
 
     $ sherlock -c "echo 'Hello World.'"
 
-Using ``-c`` flag, input command is immediately translated to shell script language and executed.
+Using ``-c`` flag, input command is immediately translated to bash shell script language and executed.
 
 If you want to details. Please check `sample codes <https://github.com/Luavis/sherlock.py/tree/master/samples>`__
 
@@ -98,6 +98,7 @@ Todo
 ----
 
 * import syntax
+* support ksh/POSIX-strict
 * ``command`` package
 * documentation
 * support windows batch and powershell script
