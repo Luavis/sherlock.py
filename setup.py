@@ -37,7 +37,7 @@ def install():
             'sherlock = sherlock:execute_from_command_line',
         ]},
         install_requires=[
-            'pytest==3.0.5',
+            'pytest==9.0.3',
         ],
     )
 
